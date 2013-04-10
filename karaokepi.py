@@ -7,7 +7,7 @@
 from subprocess import call
 
 #flask specific imports
-from flask import Flask, session, redirect, url_for, escape, request
+from flask import Flask, session, redirect, url_for, escape, request, jsonify
 
 app = Flask(__name__)
 app.debug = True
@@ -18,6 +18,12 @@ def index():
     if 'username' in session:
         return 'Logged in as %s' % escape(session['username'])
     return "Hello World!, welcome to KaraokePi!"
+
+@app.route("/songs")
+def songs():
+   import glob
+   files = glob.glob('/home/pi/*.cdg')
+   return jsonify(dict(count=len(files), songs=files))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
