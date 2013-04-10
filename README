@@ -1,0 +1,21 @@
+App: KaraokePi
+
+Desc: KaraokePi is a webserver app that will play Karaoke CDG/MP3 files using the HDMI output and audio output of the Raspberry Pi.
+
+Initial Setup:
+
+1. From fresh install of Raspbian
+2. sudo apt-get update (installs latest OS)
+3. sudo apt-get install pip
+4. sudo apt-get install git-core
+5. sudo apt-get install pykaraoke (installs in main site-packages)
+
+6. create a virtualenv (make sure that you are using site-packages otherwise can't reference pykaraoke)
+7. go to Desktop
+8. virtualenv KaraokePi
+9. cd KaraokePi
+10. source bin/activate
+11. pip install flask
+12. python karaokepi_server.py (starts the Flask server)
+
+
