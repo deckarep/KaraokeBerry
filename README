@@ -18,4 +18,8 @@ Initial Setup:
 11. pip install flask
 12. python karaokepi_server.py (starts the Flask server)
 
+TODO:
 
+1. run pykaraoke from a different child process
+2. create whole rest api that's json based
+3. create admin login so that only one admin can run the app
