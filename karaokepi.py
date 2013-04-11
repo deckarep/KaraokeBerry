@@ -4,10 +4,14 @@
 #*this worked!!!!
 
 #python standard imports
+import glob
+import os
 from subprocess import call
 
 #flask specific imports
 from flask import Flask, session, redirect, url_for, escape, request, jsonify
+
+SONG_PATH = '/home/pi/'
 
 app = Flask(__name__)
 app.debug = True
@@ -21,8 +25,7 @@ def index():
 
 @app.route("/songs")
 def songs():
-   import glob
-   files = glob.glob('/home/pi/*.cdg')
+   files = glob.glob(os.path.join(SONG_PATH, '*.cdg'))
    return jsonify(dict(count=len(files), songs=files))
 
 @app.route('/login', methods=['GET', 'POST'])
