@@ -6,7 +6,7 @@
 #python standard imports
 import glob
 import os
-from subprocess import call
+import subprocess
 
 #flask specific imports
 from flask import Flask, session, redirect, url_for, escape, request, jsonify
@@ -45,9 +45,9 @@ def logout():
 
 @app.route("/play/<artist>")
 def play_artist(artist):
-    call(['pykaraoke', '/home/pi/pokerface.cdg'])
+    #subprocess.call(['pykaraoke', os.path.join(SONG_PATH, 'pokerface.cdg')])
+    subprocess.Popen(['pykaraoke', os.path.join(SONG_PATH, 'pokerface.cdg')])
     return "Now playing artist %s" % artist
-
 
 if __name__ == "__main__":
     app.run('0.0.0.0')

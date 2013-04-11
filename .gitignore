@@ -3,6 +3,6 @@
 bin
 lib
 include
-
+*.swp
 #Mac OSX custom attribute files
 .DS_Store
