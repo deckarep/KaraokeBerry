@@ -50,6 +50,15 @@ def search(keyword):
             resultlist.append(coll)
     return jsonify({'results':resultlist})
      
+@app.route('/piaddress')
+def piaddress():
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("gmail.com",80))
+    result = s.getsockname()[0]
+    s.close()
+    return result
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

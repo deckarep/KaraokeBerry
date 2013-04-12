@@ -3,9 +3,9 @@
 <head> 
 	<title>My Page</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.css" />
-	<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
-	<script src="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.js"></script>
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
 </head> 
 <body> 
 
@@ -63,11 +63,41 @@
 	<div data-role="content">	
 		<p>Your songs will automatically be submitted to the Main Queue when the Main Queue requests your next song!</p>
 		<p>
-			<ol data-role="listview" data-inset="true">
+			<ol data-role="listview" data-inset="true" data-filter="true">
 				<li>Drive - The Cars</li>
 				<li>Valerie - Amy Winehouse</li>
 				<li>Come Undone - Duran Duran</li>
 			</ol>
+		</p>
+	</div><!-- /content -->
+	
+	<div data-role="footer">
+		<h4>Karaoke Pi - Copyright 2013</h4>
+	</div><!-- /footer -->
+</div><!-- /page popup -->
+
+<!-- Start of third page: #favoritesPage -->
+<div data-role="page" id="favoritesPage" data-theme="a" data-add-back-btn="true">
+
+	<div data-role="header">
+		<h1>Favorites</h1>
+		<a href="#one" class="ui-btn-right" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		<p>Below is a list of your favorite songs that you may want to sing along to on your next performance.</p>
+		<p>
+		    <ul data-role="listview" data-inset="true" data-filter="true">
+		       <li data-role="list-divider">Duran Duran</li>
+		       <li><a href="#"><h2>Hungry Like the Wolf</h2><p class="ui-li-aside"><strong>10</strong></p></a>
+		       <a href="#"></ ma>
+</li>
+		       <li>Welcome to the Jungle - Gun's and Roses</li>
+		       <li>Break on Through - The Doors</li>
+		       <li>Under the Milky Way Tonight - The Church</li>
+		       <li>Smooth Operator - Sade</li>
+		       <li>In Your Eyes - Peter Gabriel</li>
+		    </ul>
 		</p>
 	</div><!-- /content -->
 	
