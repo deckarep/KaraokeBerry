@@ -23,3 +23,10 @@ TODO:
 1. run pykaraoke from a different child process
 2. create whole rest api that's json based
 3. create admin login so that only one admin can run the app
+4. integrate jquery mobile site with flask server side backend (possibly due it all through rest requests with state simply in javascript local to the page???)
+
+
+
+GETTING STARTED:
+1. navigate to localhost:5000/mobile  (to see the jquery mobile interface in action)
+2. read karaokepi.py to see all the rest calls supported.
