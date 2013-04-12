@@ -44,7 +44,7 @@ def search(keyword):
     songlist = ['robert', 'ronaldo', 'adrian', 'barbara', 'rick', 'chris', 'sierra', 'daniel', 'chrisanne', 'ruben', 'jeremy', 'john', 'jimmy', 'jackson', 'jonas', 'mycal', 'melinda', 'melissa', 'steve', 'steven', 'steffan', 'jack', 'sonia', 'ralph', 'nicole', 'sophia', 'ronnie', 'jesse', 'adrianna', 'mia', 'aviara'] 
     for token in songlist:
         if keyword in token:  
-            resultlist.append(token)
+            resultlist.append("<strong>You've got the look</strong> - " + token)
     return jsonify(dict(songs=resultlist))
      
 
