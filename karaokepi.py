@@ -7,9 +7,10 @@
 import glob
 import os
 import subprocess
+import time
 
 #flask specific imports
-from flask import Flask, session, redirect, url_for, escape, request, jsonify
+from flask import Flask, session, redirect, url_for, escape, request, jsonify, Response
 
 SONG_PATH = '/home/pi/'
 
@@ -41,11 +42,13 @@ def search(keyword):
     if keyword is not None:
         keyword = keyword.lower()
     resultlist = []
-    songlist = ['robert', 'ronaldo', 'adrian', 'barbara', 'rick', 'chris', 'sierra', 'daniel', 'chrisanne', 'ruben', 'jeremy', 'john', 'jimmy', 'jackson', 'jonas', 'mycal', 'melinda', 'melissa', 'steve', 'steven', 'steffan', 'jack', 'sonia', 'ralph', 'nicole', 'sophia', 'ronnie', 'jesse', 'adrianna', 'mia', 'aviara'] 
-    for token in songlist:
-        if keyword in token:  
-            resultlist.append("<strong>You've got the look</strong> - " + token)
-    return jsonify(dict(songs=resultlist))
+    songlist = [{'artist':'Lady Gaga', 'tracks':[{'t':'Poker Face','fp':'/home/pi/pokerface'}, {'t':'Bad Romance','fp':'/home/pi/badromance'}]},
+		{'artist':'Billy Idol', 'tracks':[{'t':'White Wedding','fp':'/home/pi/whitewedding'}, {'t':'Eyes Without a Face','fp':'/home/pi/eyeswithoutface'}]},
+		{'artist':'Adele', 'tracks':[{'t':'Skyfall','fp':'/home/pi/skyfall'}, {'t':'Rolling In the Deep','fp':'/home/pi/rollingdeep'}]}]
+    for coll in songlist:
+        if keyword in coll['artist'].lower():  
+            resultlist.append(coll)
+    return jsonify({'results':resultlist})
      
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -56,6 +59,17 @@ def login():
     return '''
         <form action="" method="post"><p><input type="text" name="username" /></p>
         <p><input type="submit" value="login" /></p></form>'''
+
+#example of generator, this BLOCKS all other requests until finished NOTICE the sleep
+#implies that Flask is single threaded by nature.
+@app.route('/busy')
+def busy_request():
+    def generate():
+        for x in xrange(10):
+            yield x
+            time.sleep(5)
+    return Response(generate(), mimetype='text/html')
+    
 
 @app.route('/logout')
 def logout():

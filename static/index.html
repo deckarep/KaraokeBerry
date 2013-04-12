@@ -13,30 +13,26 @@
 <div data-role="page" id="one" data-theme="a">
 
 	<div data-role="header">
-		<h1> - Karaoke Pi - </h1>
+		<h3>Home</h3>
 	</div><!-- /header -->
 
 	<div data-role="content">	
-		<!-- Sample home pages
-		<h2>One</h2>
-		
-		<p>I have an <code>id</code> of "one" on my page container. I'm first in the source order so I'm shown when the page loads.</p>	
-		
-		<p>This is a multi-page boilerplate template that you can copy to build your first jQuery Mobile page. This template contains multiple "page" containers inside, unlike a <a href="page-template.html"> single page template</a> that has just one page within it.</p>	
-		<p>Just view the source and copy the code to get started. All the CSS and JS is linked to the jQuery CDN versions so this is super easy to set up. Remember to include a meta viewport tag in the head to set the zoom level.</p>
-		<p>You link to internal pages by referring to the <code>id</code> of the page you want to show. For example, to <a href="#two" >link</a> to the page with an <code>id</code> of "two", my link would have a <code>href="#two"</code> in the code.</p>	
-
-		<h3>Show internal pages:</h3>
-		<p><a href="#two" data-role="button" data-transition="flow">Show page "two"</a></p>	
-		<p><a href="#popup" data-role="button" data-rel="dialog" data-transition="pop">Show page "popup" (as a dialog)</a></p>
-		<p><a href="#searchPage" data-role="button">Search Page</a></p>	
-		-->
-		<h2>[[ LOGO HERE ]]</h2>
+		<h3>[[ LOGO HERE ]]</h3>
 		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="search" data-iconpos="right">Search</a></p>
+		<p>
+		    <ul data-role="listview" data-inset="true">
+ 			<li><a href="#myQueuePage" data-transition="flow">My Queue<span class="ui-li-count">3</span></a></li>
+			<li><a href="#mainQueuePage" data-transition="flow">Main Queue<span class="ui-li-count">7</span></a></li>
+			<li><a href="#favoritesPage" data-transition="flow">Favorites<span class="ui-li-count">1</span></a></li>
+		    </ul>
+		</p>
+		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="check" data-iconpos="right">Login</a></p>
+		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="delete" data-iconpos="right">Logout</a></p>
+		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="info" data-iconpos="right">About</a></p>
 	</div><!-- /content -->
 	
 	<div data-role="footer">
-		<h4>Page Footer</h4>
+		<h4>Karaoke Pi - Copyright 2013</h4>
 	</div><!-- /footer -->
 </div><!-- /page one -->
 
@@ -49,15 +45,37 @@
 
 	<div data-role="content" data-theme="a">	
 		<h3>Wishing Well - Terence Trent D'Arby</h3>
-                <p><a href="#" data-role="button" data-theme="b">Queue Song</a></p>
-                <p><a href="#" data-role="button" data-theme="a">Cancel</a></p>
+                <p><a href="#" data-role="button" data-theme="b" data-icon="plus" data-iconpos="right">Add to My Queue</a></p>
+		<p><a href="#" data-role="button" data-theme="b" data-icon="star" data-iconpos="right">Add to Favorites</a></p>
+                <p><a href="#searchPage" data-rel="back" data-role="button" data-theme="a">Cancel</a></p>
 		
 	</div><!-- /content -->
-	
-	<div data-role="footer"
-		<h4>Page Footer</h4>
-	</div><!-- /footer -->
 </div><!-- /page two -->
+
+<!-- Start of third page: #myQueuePage -->
+<div data-role="page" id="myQueuePage" data-theme="a" data-add-back-btn="true">
+
+	<div data-role="header">
+		<h1>My Queue</h1>
+		<a href="#one" class="ui-btn-right" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		<p>Your songs will automatically be submitted to the Main Queue when the Main Queue requests your next song!</p>
+		<p>
+			<ol data-role="listview" data-inset="true">
+				<li>Drive - The Cars</li>
+				<li>Valerie - Amy Winehouse</li>
+				<li>Come Undone - Duran Duran</li>
+			</ol>
+		</p>
+	</div><!-- /content -->
+	
+	<div data-role="footer">
+		<h4>Karaoke Pi - Copyright 2013</h4>
+	</div><!-- /footer -->
+</div><!-- /page popup -->
+
 
 <!-- Start of third page: #popup -->
 <div data-role="page" id="popup">
@@ -126,14 +144,13 @@ $("#searchPage").on("pageshow", function(e) {
             sugList.listview("refresh");
         } else {
             $.get("/search/"+text, function(res, code) {
-                if(res && res.songs && res.songs.length > 0){
+                if(res && res.results && res.results.length > 0){
                     var str = "";
-                    for(var i=0, len=res.songs.length; i<len; i++) {
-                        if(i % 5 == 0){
-                            str += '<li data-role="list-divider">A<li>';
-                        }else{
-                    	    str += '<li><a href="#two" data-rel="dialog" data-transition="pop">' + res.songs[i]+'</a></li>';
-                        }
+                    for(var i=0, len=res.results.length; i<len; i++){
+			str += '<li data-role="list-divider">'+res.results[i].artist+'<li>';
+			for(var x=0, lenX=res.results[i].tracks.length; x<lenX; x++){
+                    	    str += '<li><a href="#two" data-rel="dialog" data-transition="pop">' + res.results[i].tracks[x].t+'</a></li>';
+			}
                     }
                     sugList.html(str);
                     sugList.listview("refresh");
