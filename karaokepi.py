@@ -27,6 +27,33 @@ app = Flask(__name__)
 app.debug = True
 app.secret_key = 'Booga Time!' #secret session key more info at Flask documentation site
 
+#user functionality
+#this is safe, since we're using gevent
+users = set()
+@app.route("/adduser/<name>")
+def adduser(name):
+    users.add(name)
+    return "User %s added" % name
+
+@app.route("/deleteuser/<name>")
+def removeuser(name):
+    if name in users:
+        users.remove(name)
+        return "User %s removed" % name
+    else:
+        return "User %s not found." % name
+
+@app.route("/clearusers")
+def clearusers():
+    global users
+    users = set()
+    return "All users cleared"
+
+@app.route("/showusers/")
+def showusers():
+    return ", ".join(users)
+
+
 #static files test
 @app.route("/mobile")
 def mobile():
@@ -86,7 +113,7 @@ def login():
 
 #example of generator, this BLOCKS all other requests until finished NOTICE the sleep
 #implies that Flask is single threaded by nature.
-#not working wtih gevent a note in Flask documentation says it could be WSGI middleware not supporting
+#with gevent this is working while yielding to other requests (Excellent!)
 @app.route('/busy')
 def busy_request():
     def generate():
