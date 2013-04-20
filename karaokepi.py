@@ -51,7 +51,11 @@ def clearusers():
 
 @app.route("/showusers/")
 def showusers():
-    return ", ".join(users)
+    if len(users) == 0:
+        return "none"
+    else:
+        return ", ".join(users)
+
 
 
 #static files test
