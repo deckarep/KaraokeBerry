@@ -3,6 +3,13 @@
 #should redo virtualenv WITH site-packages so it sees the pykaraoke install
 #*this worked!!!!
 
+#gevent (i love this technology)
+from gevent import monkey
+monkey.patch_all()
+#from gevent.wsgi import WSGIServer
+from gevent.pywsgi import WSGIServer
+
+
 #python standard imports
 import glob
 import os
@@ -10,7 +17,7 @@ import subprocess
 import time
 
 #flask specific imports
-from flask import Flask, session, redirect, url_for, escape, request, jsonify, Response
+from flask import Flask, session, redirect, url_for, escape, request, jsonify, Response, stream_with_context
 
 SONG_PATH = '/home/pi/'
 
@@ -28,23 +35,31 @@ def mobile():
 
 @app.route("/")
 def index():
-    if 'username' in session:
-        return 'Logged in as %s' % escape(session['username'])
-    return "Hello World!, welcome to KaraokePi!"
+    return redirect(url_for("mobile"))
+    # if 'username' in session:
+    #     return 'Logged in as %s' % escape(session['username'])
+    # return "Hello World!, welcome to KaraokePi!"
 
 @app.route("/songs")
 def songs():
     files = glob.glob(os.path.join(SONG_PATH, '*.cdg'))
     return jsonify(dict(count=len(files), songs=files))
 
+def createFakeTrackList():
+    songlist = [
+        {'artist':'Lady Gaga', 'tracks':[{'t':'Poker Face','fp':'/home/pi/pokerface', 'tid':000}, {'t':'Bad Romance','fp':'/home/pi/badromance', 'tid':001}]},
+        {'artist':'Billy Idol', 'tracks':[{'t':'White Wedding','fp':'/home/pi/whitewedding', 'tid':002}, {'t':'Eyes Without a Face','fp':'/home/pi/eyeswithoutface', 'tid':003}]},
+        {'artist':'Adele', 'tracks':[{'t':'Skyfall','fp':'/home/pi/skyfall', 'tid':004}, {'t':'Rolling In the Deep','fp':'/home/pi/rollingdeep', 'tid':005}]}
+    ]
+    return songlist
+       
+
 @app.route("/search/<keyword>")
 def search(keyword):
     if keyword is not None:
         keyword = keyword.lower()
     resultlist = []
-    songlist = [{'artist':'Lady Gaga', 'tracks':[{'t':'Poker Face','fp':'/home/pi/pokerface'}, {'t':'Bad Romance','fp':'/home/pi/badromance'}]},
-		{'artist':'Billy Idol', 'tracks':[{'t':'White Wedding','fp':'/home/pi/whitewedding'}, {'t':'Eyes Without a Face','fp':'/home/pi/eyeswithoutface'}]},
-		{'artist':'Adele', 'tracks':[{'t':'Skyfall','fp':'/home/pi/skyfall'}, {'t':'Rolling In the Deep','fp':'/home/pi/rollingdeep'}]}]
+    songlist = createFakeTrackList()
     for coll in songlist:
         if keyword in coll['artist'].lower():  
             resultlist.append(coll)
@@ -71,13 +86,25 @@ def login():
 
 #example of generator, this BLOCKS all other requests until finished NOTICE the sleep
 #implies that Flask is single threaded by nature.
+#not working wtih gevent a note in Flask documentation says it could be WSGI middleware not supporting
 @app.route('/busy')
 def busy_request():
     def generate():
         for x in xrange(10):
-            yield x
-            time.sleep(5)
-    return Response(generate(), mimetype='text/html')
+            yield "Hello!"
+            time.sleep(1)
+    return Response(generate(), mimetype='text/event-stream', direct_passthrough=True)
+
+#alternative from Flask documentation
+@app.route('/stream')
+def streamed_response():
+    def generate():
+        yield 'Hello '
+        time.sleep(1)
+        yield 'Hi'
+        time.sleep(5)
+        yield '!'
+    return Response(stream_with_context(generate()))    
     
 
 @app.route('/logout')
@@ -104,6 +131,9 @@ def stop_playing():
     return "stopping subprocess"
 
 if __name__ == "__main__":
-    app.run('0.0.0.0')
+    http_server = WSGIServer(('', 5555), app)  #can i run gevent on raspberry pi?
+    http_server.serve_forever()
+    #flask style
+    #app.run('0.0.0.0', port=5555)
 
 
