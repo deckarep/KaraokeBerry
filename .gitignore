@@ -4,5 +4,6 @@ bin
 lib
 include
 *.swp
+*.pyc
 #Mac OSX custom attribute files
 .DS_Store

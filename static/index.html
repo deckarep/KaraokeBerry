@@ -35,8 +35,8 @@
 			<li><a href="#favoritesPage" data-transition="flow">Favorites<span class="ui-li-count">1</span></a></li>
 		    </ul>
 		</p>
-		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="check" data-iconpos="right">Login</a></p>
-		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="delete" data-iconpos="right">Logout</a></p>
+		<p><a href="#loginDialog" data-role="button" data-icon="check" data-rel="dialog" data-iconpos="right">Login</a></p>
+		<!--<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="delete" data-iconpos="right">Logout</a></p>-->
 		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="info" data-iconpos="right">About</a></p>
 	</div><!-- /content -->
 	
@@ -54,9 +54,9 @@
 
 	<div data-role="content" data-theme="a">	
 		<h3>Wishing Well - Terence Trent D'Arby</h3>
-                <p><a href="#" data-role="button" data-theme="b" data-icon="plus" data-iconpos="right">Add to My Queue</a></p>
+        <p><a href="#" data-role="button" data-theme="b" data-icon="plus" data-iconpos="right">Add to My Queue</a></p>
 		<p><a href="#" data-role="button" data-theme="b" data-icon="star" data-iconpos="right">Add to Favorites</a></p>
-                <p><a href="#searchPage" data-rel="back" data-role="button" data-theme="a">Cancel</a></p>
+        <p><a href="#searchPage" data-rel="back" data-role="button" data-theme="a">Cancel</a></p>
 		
 	</div><!-- /content -->
 </div><!-- /page trackDialog -->
@@ -78,6 +78,31 @@
 				<li>Come Undone - Duran Duran</li>
 			</ol>
 		</p>
+	</div><!-- /content -->
+	
+	<div data-role="footer">
+		<h4>Karaoke Pi - Copyright 2013</h4>
+	</div><!-- /footer -->
+</div><!-- /page popup -->
+
+
+<!-- Start of third page: #loginDialog -->
+<div data-role="page" id="loginDialog" data-theme="a">
+
+	<div data-role="header">
+		<h1>Login</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		<p>Please login to continue...or <a href="#">click here to sign up!</a></p>
+		<p>
+			<label for="text-basic">Username:</label>
+			<input type="text" name="text-basic" id="text-basic" value="">
+			<label for="password">Password:</label>
+			<input type="password" name="password" id="password" value="" autocomplete="off">
+		</p>
+		<p><a href="#" class="show-page-loading-msg" data-role="button" data-theme="b" data-textonly="false" data-textvisible="true" data-msgtext="Please wait...">Continue</a></p>
+        <p><a href="#searchPage" data-rel="back" data-role="button" data-theme="a">Cancel</a></p>
 	</div><!-- /content -->
 	
 	<div data-role="footer">
@@ -228,11 +253,9 @@
 		<a href="#home" class="ui-btn-right" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
     </div>
     <div data-role="content">
-		<p>Search by artist name, trackname or year.</p>
+		<p>Search by artist or track.</p>
         <p><a href="#searchPage" data-role="button" data-transition="flow" data-theme="b">Track</a></p>	
 		<p><a href="#searchPage" data-role="button" data-transition="flow" data-theme="b">Artist</a></p>	
-		<p><a href="#searchPage" data-role="button" data-transition="flow" data-theme="b">Genre</a></p>	
-		<p><a href="#searchPage" data-role="button" data-transition="flow" data-theme="b">Year</a></p>	
     </div>
     <!--<div data-role="footer">
         <h4>Page Footer</h4>
@@ -275,7 +298,9 @@
 })(jQuery);
 
 $("#searchPage").on("pageshow", function(e) {
+
     console.log("Ready to bring the awesome.");
+
     var sugList = $("#suggestions");
 
     $("#searchField").on("input", function(e) {
@@ -303,6 +328,25 @@ $("#searchPage").on("pageshow", function(e) {
             },"json");
         }
     });
+});
+//example of loading icon
+$(document).on( "click", ".show-page-loading-msg", function(){
+	//alert('hi');
+    var $this = $(this),
+        theme = $this.jqmData("theme") || $.mobile.loader.prototype.options.theme,
+        msgText = $this.jqmData("msgtext") || $.mobile.loader.prototype.options.text,
+        textVisible = $this.jqmData("textvisible") || $.mobile.loader.prototype.options.textVisible,
+        textonly = !!$this.jqmData("textonly");
+        html = $this.jqmData("html") || "";
+    $.mobile.loading( 'show', {
+            text: msgText,
+            textVisible: textVisible,
+            theme: theme,
+            textonly: textonly,
+            html: html
+	});
+}).on("click", ".hide-page-loading-msg", function(){
+    $.mobile.loading( 'hide' );
 });
 </script>
 </body>
