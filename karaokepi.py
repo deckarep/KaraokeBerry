@@ -45,8 +45,7 @@ def removeuser(name):
 
 @app.route("/clearusers")
 def clearusers():
-    global users
-    users = set()
+    users.clear()
     return "All users cleared"
 
 @app.route("/showusers/")
@@ -55,7 +54,6 @@ def showusers():
         return "none"
     else:
         return ", ".join(users)
-
 
 
 #static files test
@@ -105,7 +103,6 @@ def piaddress():
     s.close()
     return result
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -115,6 +112,12 @@ def login():
         <form action="" method="post"><p><input type="text" name="username" /></p>
         <p><input type="submit" value="login" /></p></form>'''
 
+@app.route('/logout')
+def logout():
+    #remove the username from the session if it's there
+    session.pop('username', None)
+    return redirect(url_for('index'))        
+
 #example of generator, this BLOCKS all other requests until finished NOTICE the sleep
 #implies that Flask is single threaded by nature.
 #with gevent this is working while yielding to other requests (Excellent!)
@@ -122,7 +125,7 @@ def login():
 def busy_request():
     def generate():
         for x in xrange(10):
-            yield "Hello!"
+            yield "Hello"
             time.sleep(1)
     return Response(generate(), mimetype='text/event-stream', direct_passthrough=True)
 
@@ -137,13 +140,6 @@ def streamed_response():
         yield '!'
     return Response(stream_with_context(generate()))    
     
-
-@app.route('/logout')
-def logout():
-    #remove the username from the session if it's there
-    session.pop('username', None)
-    return redirect(url_for('index'))
-
 @app.route("/queue/<artist>")
 def queue_artist(artist):
     return "TODO: queue_artist"
@@ -157,7 +153,7 @@ def play_artist(artist):
 
 @app.route("/stop/")
 def stop_playing():
-    if pykaraoke_process is not  None:
+    if pykaraoke_process is not None:
         pykaraoke_process.terminate()
     return "stopping subprocess"
 

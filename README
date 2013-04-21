@@ -17,6 +17,7 @@ Initial Setup:
 10. source bin/activate
 11. pip install flask
 12. python karaokepi_server.py (starts the Flask server)
+13. consider using redis as a backing store, i see the light about redis being a kind of extension of Python with it's awesome datastructures
 
 TODO:
 
