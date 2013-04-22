@@ -54,6 +54,7 @@
 
 	<div data-role="content" data-theme="a">	
 		<h3>Wishing Well - Terence Trent D'Arby</h3>
+		<p><a href="#" data-role="button" data-theme="b" data-icon="plus" data-iconpos="right">Admin:Play</a></p>
         <p><a href="#" data-role="button" data-theme="b" data-icon="plus" data-iconpos="right">Add to My Queue</a></p>
 		<p><a href="#" data-role="button" data-theme="b" data-icon="star" data-iconpos="right">Add to Favorites</a></p>
         <p><a href="#searchPage" data-rel="back" data-role="button" data-theme="a">Cancel</a></p>
@@ -94,7 +95,7 @@
 	</div><!-- /header -->
 
 	<div data-role="content">	
-		<p>Please login to continue...or <a href="#">click here to sign up!</a></p>
+		<p>Login to continue...</p>
 		<p>
 			<label for="text-basic">Username:</label>
 			<input type="text" name="text-basic" id="text-basic" value="">
@@ -283,6 +284,15 @@
 <script>
 //main application logic goes here beyatch.
 (function($){
+	window.playSong = function(path_to_file){
+		$.getJSON('/play/' + path_to_file, function(data){
+			console.log(data);
+		});
+	};
+	window.closeDialog = function(){
+		//closes currently open dialog.
+		$('.ui-dialog').dialog('close');
+	};
 	window.selectTrack = function(trackIndex){
 		sessionStorage.selectedTrack=track;
 	};

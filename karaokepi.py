@@ -146,10 +146,12 @@ def queue_artist(artist):
 
 @app.route("/play/<artist>")
 def play_artist(artist):
-    #subprocess.call(['pykaraoke', os.path.join(SONG_PATH, 'pokerface.cdg')])
-    global pykaraoke_process
-    pykaraoke_process = subprocess.Popen(['pykaraoke', os.path.join(SONG_PATH, 'pokerface.cdg')])
-    return "Now playing artist %s" % artist
+    #subprocess.call(['pykaraoke', os.path.join(SONG_PATH, 'pokerface.cdg')])  #blocks and waits
+    #global pykaraoke_process
+    #pykaraoke_process = subprocess.Popen(['pykaraoke', os.path.join(SONG_PATH, 'pokerface.cdg')])  #opens in another process
+    verbose = "Now playing file: %s" % artist
+    print verbose
+    return jsonify(dict(result="OK", verbose=verbose))
 
 @app.route("/stop/")
 def stop_playing():
