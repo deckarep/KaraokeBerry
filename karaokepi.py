@@ -19,9 +19,9 @@ import time
 #flask specific imports
 from flask import Flask, session, redirect, url_for, escape, request, jsonify, Response, stream_with_context
 
-SONG_PATH = '/home/pi/'
+SONG_PATH = '/Users/ralphcaraveo/Karaoke'
 
-pykaraoke_process = None
+karaokePlayerProcess = None
 
 app = Flask(__name__)
 app.debug = True
@@ -75,13 +75,27 @@ def songs():
     return jsonify(dict(count=len(files), songs=files))
 
 def createFakeTrackList():
-    songlist = [
-        {'artist':'Lady Gaga', 'tracks':[{'t':'Poker Face','fp':'/home/pi/pokerface', 'tid':000}, {'t':'Bad Romance','fp':'/home/pi/badromance', 'tid':001}]},
-        {'artist':'Billy Idol', 'tracks':[{'t':'White Wedding','fp':'/home/pi/whitewedding', 'tid':002}, {'t':'Eyes Without a Face','fp':'/home/pi/eyeswithoutface', 'tid':003}]},
-        {'artist':'Adele', 'tracks':[{'t':'Skyfall','fp':'/home/pi/skyfall', 'tid':004}, {'t':'Rolling In the Deep','fp':'/home/pi/rollingdeep', 'tid':005}]}
-    ]
+    # songlist = [
+    #     {'artist':'Lady Gaga', 'tracks':[{'t':'Poker Face','fp':'/home/pi/pokerface', 'tid':000}, {'t':'Bad Romance','fp':'/home/pi/badromance', 'tid':001}]},
+    #     {'artist':'Billy Idol', 'tracks':[{'t':'White Wedding','fp':'/home/pi/whitewedding', 'tid':002}, {'t':'Eyes Without a Face','fp':'/home/pi/eyeswithoutface', 'tid':003}]},
+    #     {'artist':'Adele', 'tracks':[{'t':'Skyfall','fp':'/home/pi/skyfall', 'tid':004}, {'t':'Rolling In the Deep','fp':'/home/pi/rollingdeep', 'tid':005}]}
+    # ]
+    songlist = []
+    files = glob.glob(os.path.join(SONG_PATH, '*.mp3'))
+
+    for file_path in files:
+        name = os.path.basename(file_path)
+        artist, song = name.split('-')
+        song = song.strip()
+        artist = artist.strip()
+        songlist.append(
+            {'artist':artist, 'tracks':[{'t':song,'fp':name, 'tid':000}]}
+        )
+        print songlist
     return songlist
-       
+
+#TODO TODO TODO:WARNING - search routine below is doing a glob for every keypress, need to index ahead of time first
+# create method to gen index.       
 
 @app.route("/search/<keyword>")
 def search(keyword):
@@ -146,18 +160,33 @@ def queue_artist(artist):
 
 @app.route("/play/<artist>")
 def play_artist(artist):
+    path = os.path.join(SONG_PATH, artist)
+    #example using subprocess DON'T USE
     #subprocess.call(['pykaraoke', os.path.join(SONG_PATH, 'pokerface.cdg')])  #blocks and waits
-    #global pykaraoke_process
-    #pykaraoke_process = subprocess.Popen(['pykaraoke', os.path.join(SONG_PATH, 'pokerface.cdg')])  #opens in another process
+    
+    global karaokePlayerProcess
+    
+    #using pykaraoke
+    #karaokePlayerProcess = subprocess.Popen(['pykaraoke', os.path.join(SONG_PATH, 'pokerface.cdg')])  #opens in another process
+    
+    #using vlc
+    karaokePlayerProcess = subprocess.Popen(['/Applications/VLC.app/Contents/MacOS/VLC', '--fullscreen', '--play-and-exit', '--video-on-top', '--video-on-top', path])  #opens in another process
+
     verbose = "Now playing file: %s" % artist
-    print verbose
     return jsonify(dict(result="OK", verbose=verbose))
 
-@app.route("/stop/")
+@app.route("/pause")
+def pause_player():
+    pass
+    #subprocess.Popen(['/Applications/VLC.app/Contents/MacOS/VLC', '--fullscreen', '--play-and-exit', '--video-on-top', '--video-on-top', path])  #opens in another process
+
+@app.route("/stop")
 def stop_playing():
-    if pykaraoke_process is not None:
-        pykaraoke_process.terminate()
-    return "stopping subprocess"
+    subprocess.Popen(['/Applications/VLC.app/Contents/MacOS/VLC', 'vlc://quit'])
+    return "stopping vlc"
+    # if karaokePlayerProcess is not None:
+    #     karaokePlayerProcess.terminate()
+    # return "stopping subprocess"
 
 if __name__ == "__main__":
     http_server = WSGIServer(('', 5555), app)  #can i run gevent on raspberry pi?

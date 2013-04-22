@@ -293,8 +293,10 @@
 		//closes currently open dialog.
 		$('.ui-dialog').dialog('close');
 	};
-	window.selectTrack = function(trackIndex){
-		sessionStorage.selectedTrack=track;
+	window.selectTrack = function(file_path){
+		window.playSong(file_path);
+		
+		//sessionStorage.selectedTrack=track;
 	};
 	window.addToMyQueue = function(track_id){
 		//calls server-side rest
@@ -326,7 +328,8 @@ $("#searchPage").on("pageshow", function(e) {
 						str += '<li data-role="list-divider">'+res.results[i].artist+'<li>';
 						for(var x=0, lenX=res.results[i].tracks.length; x<lenX; x++){
 							var currentTrack = res.results[i].tracks[x];
-                    		str += '<li><a href="#trackDialog" onclick="selectTrack('+ i + ':' + x +');" data-rel="dialog" data-transition="pop">' + currentTrack.t+'</a></li>';
+							var path = currentTrack.fp;
+                    		str += '<li><a href="#trackDialog" onclick="selectTrack(\'' + path + '\');" data-rel="dialog" data-transition="pop">' + currentTrack.t+'</a></li>';
 						}
                     }
                     sugList.html(str);
