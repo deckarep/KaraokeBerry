@@ -170,10 +170,10 @@ def play_artist(artist):
     #karaokePlayerProcess = subprocess.Popen(['pykaraoke', os.path.join(SONG_PATH, 'pokerface.cdg')])  #opens in another process
     
     #using vlc
-    karaokePlayerProcess = subprocess.Popen(['/Applications/VLC.app/Contents/MacOS/VLC', '--fullscreen', '--play-and-exit', '--video-on-top', '--video-on-top', path])  #opens in another process
-
-    verbose = "Now playing file: %s" % artist
-    return jsonify(dict(result="OK", verbose=verbose))
+    if karaokePlayerProcess is None:
+        karaokePlayerProcess = subprocess.Popen(['/Applications/VLC.app/Contents/MacOS/VLC', '--fullscreen', '--play-and-exit', '--video-on-top', '--video-on-top', path])  #opens in another process
+        verbose = "Now playing file: %s" % artist
+        return jsonify(dict(result="OK", verbose=verbose))
 
 @app.route("/pause")
 def pause_player():
