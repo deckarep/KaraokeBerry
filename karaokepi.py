@@ -86,7 +86,7 @@ def createFakeTrackList():
     for file_path in files:
         name = os.path.basename(file_path)
         artist, song = name.split('-')
-        song = song.strip()
+        song = song.strip().replace('.mp3', '')
         artist = artist.strip()
         songlist.append(
             {'artist':artist, 'tracks':[{'t':song,'fp':name, 'tid':000}]}

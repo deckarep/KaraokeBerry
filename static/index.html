@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<!--Documentation for this version of jquery mobile: http://view.jquerymobile.com/1.3.1/dist/demos/ -->
 	<script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
 	<style type="text/css">
 		.logo{
@@ -53,11 +54,11 @@
 	</div><!-- /header -->
 
 	<div data-role="content" data-theme="a">	
-		<h3>Wishing Well - Terence Trent D'Arby</h3>
-		<p><a href="#" data-role="button" data-theme="b" data-icon="plus" data-iconpos="right">Admin:Play</a></p>
-        <p><a href="#" data-role="button" data-theme="b" data-icon="plus" data-iconpos="right">Add to My Queue</a></p>
-		<p><a href="#" data-role="button" data-theme="b" data-icon="star" data-iconpos="right">Add to Favorites</a></p>
-        <p><a href="#searchPage" data-rel="back" data-role="button" data-theme="a">Cancel</a></p>
+		<h3 id="trackDialogArtistTitle"></h3>
+        <p><a href="#" class="ui-disabled" data-role="button" data-theme="b" data-icon="plus" data-iconpos="right">Add to My Queue</a></p>
+		<p><a href="#" class="ui-disabled" data-role="button" data-theme="b" data-icon="star" data-iconpos="right">Add to Favorites</a></p>
+		<p><a href="#" onclick="window.playSong();" data-role="button" data-theme="a" data-icon="plus" data-iconpos="right">Admin:Play</a></p>
+        <p><a href="#" onclick="window.unselectTrack();" data-role="button" data-theme="a">Cancel</a></p>
 		
 	</div><!-- /content -->
 </div><!-- /page trackDialog -->
@@ -255,8 +256,9 @@
     </div>
     <div data-role="content">
 		<p>Search by artist or track.</p>
-        <p><a href="#searchPage" data-role="button" data-transition="flow" data-theme="b">Track</a></p>	
-		<p><a href="#searchPage" data-role="button" data-transition="flow" data-theme="b">Artist</a></p>	
+		<p><a href="#searchPage" data-role="button" data-transition="flow" data-theme="b">Artist</a></p>
+		<!--disabled below using css because it's not implemented yet.-->
+        <p><a class="ui-disabled" href="#searchPage" data-role="button" data-transition="flow" data-theme="b">Track</a></p>	
     </div>
     <!--<div data-role="footer">
         <h4>Page Footer</h4>
@@ -267,14 +269,13 @@
 <div data-role="page" id="searchPage" data-theme="a" data-add-back-btn="true">
 
     <div data-role="header">
-        <h1>Search</h1>
+        <h1>Search by Artist</h1>
         <a href="#home" class="ui-btn-right" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
     </div>
     <div data-role="content">
-		<p>Search by artist name, trackname or year.</p>
-        <p><label for="searchField">Search Query:</label><input type="search" id="searchField" placeholder="Search" />
+        <!--<label for="searchField">Search:</label>-->
+        <input type="search" id="searchField" placeholder="Search" />
 		<ul id="suggestions" data-role="listview" data-inset="true"></ul>
-		</p>
     </div>
     <!--<div data-role="footer">
         <h4>Page Footer</h4>
@@ -285,7 +286,9 @@
 //main application logic goes here beyatch.
 (function($){
 	window.playSong = function(path_to_file){
-		$.getJSON('/play/' + path_to_file, function(data){
+		var path = path_to_file || sessionStorage.selectedTrack;
+
+		$.getJSON('/play/' + path, function(data){
 			console.log(data);
 		});
 	};
@@ -294,9 +297,12 @@
 		$('.ui-dialog').dialog('close');
 	};
 	window.selectTrack = function(file_path){
-		window.playSong(file_path);
-		
-		//sessionStorage.selectedTrack=track;
+		//remember path but enhance in the futre to know the user's id to submit a performance
+		sessionStorage.selectedTrack=file_path;
+	};
+	window.unselectTrack = function(){
+		sessionStorage.removeItem("selectedTrack");
+		window.closeDialog();
 	};
 	window.addToMyQueue = function(track_id){
 		//calls server-side rest
@@ -321,18 +327,20 @@ $("#searchPage").on("pageshow", function(e) {
             sugList.html("");
             sugList.listview("refresh");
         } else {
-            $.get("/search/"+text, function(res, code) {
+            $.get("/search/" + text, function(res, code) {
                 if(res && res.results && res.results.length > 0){
-                    var str = "";
+                    var html = [];
                     for(var i=0, len=res.results.length; i<len; i++){
-						str += '<li data-role="list-divider">'+res.results[i].artist+'<li>';
+						//html.push('<li data-role="list-divider">'+res.results[i].artist+'<li>');
+						var currentArtist = res.results[i];
 						for(var x=0, lenX=res.results[i].tracks.length; x<lenX; x++){
-							var currentTrack = res.results[i].tracks[x];
+							var currentTrack = currentArtist.tracks[x];
 							var path = currentTrack.fp;
-                    		str += '<li><a href="#trackDialog" onclick="selectTrack(\'' + path + '\');" data-rel="dialog" data-transition="pop">' + currentTrack.t+'</a></li>';
+							var artist_title = currentArtist.artist + ' - ' + currentTrack.t;
+                    		html.push('<li><a class="searchResultListItem" href="#trackDialog" data-artist-title="'+ artist_title +'" onclick="selectTrack(\'' + path + '\');" data-rel="dialog" data-transition="pop">' + artist_title +'</a></li>');
 						}
                     }
-                    sugList.html(str);
+                    sugList.html(html.join(''));
                     sugList.listview("refresh");
                 }else{
 	    	    	sugList.html("<li><strong>[No Results]</strong></li>");
@@ -360,6 +368,11 @@ $(document).on( "click", ".show-page-loading-msg", function(){
 	});
 }).on("click", ".hide-page-loading-msg", function(){
     $.mobile.loading( 'hide' );
+});
+$(document).on("click", "a.searchResultListItem", function(){
+	var $this = $(this),
+		artist_title = $this.jqmData("artist-title");
+	$('#trackDialogArtistTitle').text(artist_title);
 });
 </script>
 </body>
