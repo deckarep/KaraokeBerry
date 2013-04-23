@@ -117,7 +117,6 @@
 	</div><!-- /header -->
 
 	<div data-role="content">	
-		<p>Login to continue...</p>
 		<p>
 			<label for="text-basic">Username:</label>
 			<input type="text" name="text-basic" id="text-basic" value="">
@@ -295,7 +294,7 @@
     </div>
     <div data-role="content">
         <!--<label for="searchField">Search:</label>-->
-        <input type="search" id="searchField" placeholder="Search" />
+        <input type="search" id="searchField" placeholder="Enter an Artist" />
 		<ul id="suggestions" data-role="listview" data-inset="true"></ul>
     </div>
     <!--<div data-role="footer">
@@ -337,7 +336,6 @@
 })(jQuery);
 
 $("#searchPage").on("pageshow", function(e) {
-
     console.log("Ready to bring the awesome.");
 
     var sugList = $("#suggestions");
@@ -352,14 +350,13 @@ $("#searchPage").on("pageshow", function(e) {
                 if(res && res.results && res.results.length > 0){
                     var html = [];
                     for(var i=0, len=res.results.length; i<len; i++){
-						//html.push('<li data-role="list-divider">'+res.results[i].artist+'<li>');
+						
 						var currentArtist = res.results[i];
-						for(var x=0, lenX=res.results[i].tracks.length; x<lenX; x++){
-							var currentTrack = currentArtist.tracks[x];
-							var path = currentTrack.fp;
-							var artist_title = currentArtist.artist + ' - ' + currentTrack.t;
-                    		html.push('<li><a class="searchResultListItem" href="#trackDialog" data-artist-title="'+ artist_title +'" onclick="selectTrack(\'' + path + '\');" data-rel="dialog" data-transition="pop">' + artist_title +'</a></li>');
-						}
+						var currentTrack = currentArtist.track;
+						var path = currentTrack.fp;
+						var artist_title = currentArtist.artist + ' - ' + currentTrack.t;
+                		html.push('<li><a class="searchResultListItem" href="#trackDialog" data-artist-title="'+ artist_title +'" onclick="selectTrack(\'' + path + '\');" data-rel="dialog" data-transition="pop">' + artist_title +'</a></li>');
+						
                     }
                     sugList.html(html.join(''));
                     sugList.listview("refresh");
@@ -370,6 +367,10 @@ $("#searchPage").on("pageshow", function(e) {
             },"json");
         }
     });
+	$(document).on('click', '.ui-input-clear', function(e){
+    	sugList.html("");
+    	sugList.listview("refresh");
+	});
 });
 //example of loading icon
 $(document).on( "click", ".show-page-loading-msg", function(){

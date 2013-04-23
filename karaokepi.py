@@ -22,10 +22,29 @@ from flask import Flask, session, redirect, url_for, escape, request, jsonify, R
 SONG_PATH = '/Users/ralphcaraveo/Karaoke'
 
 karaokePlayerProcess = None
+song_db = []
 
 app = Flask(__name__)
 app.debug = True
 app.secret_key = 'Booga Time!' #secret session key more info at Flask documentation site
+
+@app.before_first_request
+def initialize():
+    build_song_db()
+
+def build_song_db():
+    global song_db
+    files = glob.glob(os.path.join(SONG_PATH, '*.mp3'))
+
+    for file_path in files:
+        name = os.path.basename(file_path)
+        artist, song = name.split('-')
+        song = song.strip().replace('.mp3', '')
+        artist = artist.strip()
+        song_db.append(
+            {'artist':artist, 'track':{'t':song,'fp':name, 'tid':000}}
+        )
+
 
 #user functionality
 #this is safe, since we're using gevent
@@ -74,36 +93,13 @@ def songs():
     files = glob.glob(os.path.join(SONG_PATH, '*.cdg'))
     return jsonify(dict(count=len(files), songs=files))
 
-def createFakeTrackList():
-    # songlist = [
-    #     {'artist':'Lady Gaga', 'tracks':[{'t':'Poker Face','fp':'/home/pi/pokerface', 'tid':000}, {'t':'Bad Romance','fp':'/home/pi/badromance', 'tid':001}]},
-    #     {'artist':'Billy Idol', 'tracks':[{'t':'White Wedding','fp':'/home/pi/whitewedding', 'tid':002}, {'t':'Eyes Without a Face','fp':'/home/pi/eyeswithoutface', 'tid':003}]},
-    #     {'artist':'Adele', 'tracks':[{'t':'Skyfall','fp':'/home/pi/skyfall', 'tid':004}, {'t':'Rolling In the Deep','fp':'/home/pi/rollingdeep', 'tid':005}]}
-    # ]
-    songlist = []
-    files = glob.glob(os.path.join(SONG_PATH, '*.mp3'))
-
-    for file_path in files:
-        name = os.path.basename(file_path)
-        artist, song = name.split('-')
-        song = song.strip().replace('.mp3', '')
-        artist = artist.strip()
-        songlist.append(
-            {'artist':artist, 'tracks':[{'t':song,'fp':name, 'tid':000}]}
-        )
-        print songlist
-    return songlist
-
-#TODO TODO TODO:WARNING - search routine below is doing a glob for every keypress, need to index ahead of time first
-# create method to gen index.       
-
 @app.route("/search/<keyword>")
 def search(keyword):
     if keyword is not None:
         keyword = keyword.lower()
     resultlist = []
-    songlist = createFakeTrackList()
-    for coll in songlist:
+    
+    for coll in song_db:
         if keyword in coll['artist'].lower():  
             resultlist.append(coll)
     return jsonify({'results':resultlist})
