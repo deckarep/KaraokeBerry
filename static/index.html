@@ -15,6 +15,26 @@
 			padding:50px;
 			color:#000000;
 		}
+		.myMarquee{
+			font-size:45px;
+			width:100%; 
+			height:30px; 
+			white-space:nowrap;
+			overflow: hidden;
+			overflow-x:-webkit-marquee;
+			-webkit-marquee-direction: forwards;
+			-webkit-marquee-style: scroll;
+			-webkit-marquee-speed: fast;
+			-webkit-marquee-increment: small;
+			-webkit-marquee-repetition: 5;
+			overflow-x: marquee-line;
+			marquee-direction: forward;
+			marquee-style: scroll;
+			marquee-speed: fast;
+			marquee-play-count: infinite;
+			margin-left:auto;
+			margin-right:auto;
+		}
 	</style>
 </head> 
 <body> 
@@ -37,8 +57,9 @@
 		    </ul>
 		</p>
 		<p><a href="#loginDialog" data-role="button" data-icon="check" data-rel="dialog" data-iconpos="right">Login</a></p>
-		<!--<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="delete" data-iconpos="right">Logout</a></p>-->
+		<p><a href="#searchByPage" class="ui-disabled" data-role="button" data-transition="flow" data-icon="delete" data-iconpos="right">Admin</a></p>
 		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="info" data-iconpos="right">About</a></p>
+		<p data-role="button" data-theme="e" class="myMarquee">Now performing: John Winters - Love My Way - The Psychedelic Furs</p>
 	</div><!-- /content -->
 	
 	<div data-role="footer">
