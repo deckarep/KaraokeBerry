@@ -82,6 +82,10 @@ def showusers():
 def mobile():
     return redirect(url_for('static', filename='index.html'))
 
+@app.route("/swipe.js")
+def swipe():
+    return redirect(url_for('static', filename="swipe.js"))
+
 
 @app.route("/")
 def index():

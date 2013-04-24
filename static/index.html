@@ -7,14 +7,8 @@
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 	<!--Documentation for this version of jquery mobile: http://view.jquerymobile.com/1.3.1/dist/demos/ -->
 	<script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+	<script src="/swipe.js"></script>
 	<style type="text/css">
-		.logo{
-			border: 8px solid black;
-			background-color: #ff00ff;
-			text-align: center;
-			padding:50px;
-			color:#000000;
-		}
 		.myMarquee{
 			font-size:45px;
 			width:100%; 
@@ -35,6 +29,35 @@
 			margin-left:auto;
 			margin-right:auto;
 		}
+		.swipe {
+		  overflow: hidden;
+		  visibility: hidden;
+		  position: relative;
+		}
+		.swipe-wrap {
+		  overflow: hidden;
+		  position: relative;
+		}
+		.swipe-wrap > div {
+		  float:left;
+		  width:100%;
+		  position: relative;
+		}
+		#slider {
+		  background:#414141;
+		}
+		.swipe-wrap > div > span {
+		  display:block;
+		  background:#1db1ff;
+		  font-weight:bold;
+		  color:#fff;
+		  font-size:20px;
+		  text-align:center;
+		  margin:15px 14px 16px;
+		  padding:100px 10px;
+		  border-radius:5px;
+		  text-shadow:none;
+		}
 	</style>
 </head> 
 <body> 
@@ -47,7 +70,22 @@
 	</div><!-- /header -->
 
 	<div data-role="content">	
-		<h1 class="logo">KARAOKE PI</h1>
+		<!--TODO: integrate swipe.js gallery for the top banner with promo art
+			- logo
+			- browse 
+			- compete
+			- upload to facebook
+		-->
+		<!--<h1 class="logo">KARAOKE PI</h1>-->
+		<div id='slider' class='swipe'>
+	      	<div class='swipe-wrap'>
+		        <div><span>1</span></div>
+		        <div><span>2</span></div>
+		        <div><span>3</span></div>
+		        <div><span>4</span></div>
+		        <div><span>5</span></div>
+	      	</div>
+    	</div> <!-- /slider -->
 		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="search" data-iconpos="right">Search</a></p>
 		<p>
 		    <ul data-role="listview" data-inset="true">
@@ -433,6 +471,8 @@ sessionStorage.loggedIn = "false";
 })(jQuery);
 $('#home').on("pageshow", function(e){
 	window.updateLoggedInState();
+	//init swipe.js control on homepage
+	window.mySwipe = Swipe(document.getElementById('slider'));
 });
 $("#searchPage").on("pageshow", function(e) {
     console.log("Ready to bring the awesome.");
