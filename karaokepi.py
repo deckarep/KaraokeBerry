@@ -21,6 +21,10 @@ from flask import Flask, session, redirect, url_for, escape, request, jsonify, R
 
 SONG_PATH = '/Users/ralphcaraveo/Karaoke'
 
+#used for karaoke pi admin console, simply just to manage the admin console for KaraokePi
+ADMIN_ACCOUNT = 'admin'
+ADMIN_PASSWORD = 'password123'
+
 karaokePlayerProcess = None
 song_db = []
 

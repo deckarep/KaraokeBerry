@@ -51,9 +51,9 @@
 		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="search" data-iconpos="right">Search</a></p>
 		<p>
 		    <ul data-role="listview" data-inset="true">
- 			<li><a href="#myQueuePage" data-transition="flow">My Queue<span class="ui-li-count">3</span></a></li>
-			<li><a href="#mainQueuePage" data-transition="flow">Main Queue<span class="ui-li-count">7</span></a></li>
-			<li><a href="#favoritesPage" data-transition="flow">Favorites<span class="ui-li-count">1</span></a></li>
+				<li><a href="#mainQueuePage" data-transition="flow">Main Queue<span class="ui-li-count">7</span></a></li>
+				<li><a href="#" onclick="window.openPage('#myQueuePage');" data-transition="flow">My Queue<span class="ui-li-count">3</span></a></li>
+				<li><a href="#" onclick="window.openPage('#favoritesPage');" data-transition="flow">Favorites<span class="ui-li-count">1</span></a></li>
 		    </ul>
 		</p>
 		<p><a href="#" onclick="window.handleLoginRequest();" id="loginButton" data-role="button" data-icon="check" data-rel="dialog" data-iconpos="right">Login</a></p>
@@ -83,6 +83,20 @@
 		
 	</div><!-- /content -->
 </div><!-- /page trackDialog -->
+
+<!-- Start of second page: #alertDialog -->
+<div data-role="page" id="alertDialog" data-theme="a">
+
+	<div data-role="header">
+		<h2 id="alertDialogMessage"></h2>
+	</div><!-- /header -->
+
+	<div data-role="content" data-theme="a">	
+        <p><a href="#" onclick="window.closeDialog();" data-role="button" data-theme="b">OK</a></p>
+		
+	</div><!-- /content -->
+</div><!-- /page alertDialog -->
+
 
 <!-- Start of third page: #myQueuePage -->
 <div data-role="page" id="myQueuePage" data-theme="a" data-add-back-btn="true">
@@ -316,6 +330,13 @@ sessionStorage.loggedIn = "false";
 			console.log(data);
 		});
 	};
+	window.openPage = function(page){
+		if(sessionStorage.loggedIn === "true"){
+			$.mobile.changePage( $(page), {role: 'page', transition:'flow'});
+		}else{
+			showAlertDialog("You must be logged in!");
+		}
+	};
 	window.closeDialog = function(){
 		//closes currently open dialog.
 		$('.ui-dialog').dialog('close');
@@ -344,6 +365,10 @@ sessionStorage.loggedIn = "false";
 			window.login();
 		}
 	};
+	window.showAlertDialog = function(message){
+		$('#alertDialogMessage').text(message);
+		$.mobile.changePage( $('#alertDialog'), {role: 'dialog', transition: 'pop'});
+	};
 	window.login = function(){
 		var username = $('#usernameLogin').val();
 		var password = $('#passwordLogin').val();
@@ -359,8 +384,6 @@ sessionStorage.loggedIn = "false";
 					sessionStorage.password = password;
 					
 					window.closeDialog();
-					console.log("user logged in");
-
 					window.updateLoggedInState();
 				}
 			});
@@ -370,12 +393,13 @@ sessionStorage.loggedIn = "false";
 		$.getJSON("/logout", function(data){
 			console.log(data);
 			if(data.result == "OK"){
-				//TODO:update ui that we're logged out
+				
 				sessionStorage.loggedIn = "false";
 				sessionStorage.removeItem("username");
 				sessionStorage.removeItem("password");
-
+				
 				window.updateLoggedInState();
+				window.showAlertDialog("You have been logged out");
 			}
 		});
 	};
@@ -387,9 +411,10 @@ sessionStorage.loggedIn = "false";
 			//update button		
 			window.updateAnchorText('#loginButton', 'Logout');	
 			$('#loginButton').attr('href', '#');
+			
 			//clear username/password
-			 $('#usernameLogin').val('');
-			 $('#passwordLogin').val('');
+			$('#usernameLogin').val('');
+			$('#passwordLogin').val('');
 		}else{
 			window.updateAnchorText('#loginButton', 'Login');	
 			$('#loginButton').attr('href', '#loginDialog');
@@ -397,7 +422,6 @@ sessionStorage.loggedIn = "false";
 	};
 })(jQuery);
 $('#home').on("pageshow", function(e){
-	console.log("home shown");
 	window.updateLoggedInState();
 });
 $("#searchPage").on("pageshow", function(e) {
