@@ -42,7 +42,7 @@
 <!-- Start of first page: #home -->
 <div data-role="page" id="home" data-theme="a">
 
-	<div data-role="header">
+	<div data-role="header" data-position="fixed">
 		<h3>Home</h3>
 	</div><!-- /header -->
 
@@ -62,7 +62,7 @@
 		<p data-role="button" data-theme="e" class="myMarquee">Now performing: John Winters - Love My Way - The Psychedelic Furs</p>
 	</div><!-- /content -->
 	
-	<div data-role="footer">
+	<div data-role="footer" data-position="fixed" data-id="myFooter">
 		<h4>Karaoke Pi - Copyright 2013</h4>
 	</div><!-- /footer -->
 </div><!-- /page home -->
@@ -70,7 +70,7 @@
 <!-- Start of second page: #trackDialog -->
 <div data-role="page" id="trackDialog" data-theme="a">
 
-	<div data-role="header">
+	<div data-role="header" data-position="fixed">
 		<h1>Queue this Song?</h1>
 	</div><!-- /header -->
 
@@ -82,12 +82,15 @@
         <p><a href="#" onclick="window.unselectTrack();" data-role="button" data-theme="a">Cancel</a></p>
 		
 	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed" data-id="myFooter">
+		<h4>Karaoke Pi - Copyright 2013</h4>
+	</div><!-- /footer -->
 </div><!-- /page trackDialog -->
 
 <!-- Start of second page: #alertDialog -->
 <div data-role="page" id="alertDialog" data-theme="a">
 
-	<div data-role="header">
+	<div data-role="header" data-position="fixed">
 		<h2 id="alertDialogMessage"></h2>
 	</div><!-- /header -->
 
@@ -95,13 +98,16 @@
         <p><a href="#" onclick="window.closeDialog();" data-role="button" data-theme="b">OK</a></p>
 		
 	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed" data-id="myFooter">
+		<h4>Karaoke Pi - Copyright 2013</h4>
+	</div><!-- /footer -->
 </div><!-- /page alertDialog -->
 
 
 <!-- Start of third page: #myQueuePage -->
 <div data-role="page" id="myQueuePage" data-theme="a" data-add-back-btn="true">
 
-	<div data-role="header">
+	<div data-role="header" data-position="fixed">
 		<h1>My Queue</h1>
 		<a href="#home" class="ui-btn-right" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
 	</div><!-- /header -->
@@ -117,7 +123,7 @@
 		</p>
 	</div><!-- /content -->
 	
-	<div data-role="footer">
+	<div data-role="footer" data-position="fixed" data-id="myFooter">
 		<h4>Karaoke Pi - Copyright 2013</h4>
 	</div><!-- /footer -->
 </div><!-- /page popup -->
@@ -126,7 +132,7 @@
 <!-- Start of third page: #loginDialog -->
 <div data-role="page" id="loginDialog" data-theme="a">
 
-	<div data-role="header">
+	<div data-role="header" data-position="fixed">
 		<h1>Login</h1>
 	</div><!-- /header -->
 
@@ -141,7 +147,7 @@
         <p><a href="#searchPage" data-rel="back" data-role="button" data-theme="a">Cancel</a></p>
 	</div><!-- /content -->
 	
-	<div data-role="footer">
+	<div data-role="footer" data-position="fixed" data-id="myFooter">
 		<h4>Karaoke Pi - Copyright 2013</h4>
 	</div><!-- /footer -->
 </div><!-- /page popup -->
@@ -151,7 +157,7 @@
 <!-- Start of third page: #favoritesPage -->
 <div data-role="page" id="favoritesPage" data-theme="a" data-add-back-btn="true">
 
-	<div data-role="header">
+	<div data-role="header" data-position="fixed">
 		<h1>Favorites</h1>
 		<a href="#home" class="ui-btn-right" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
 	</div><!-- /header -->
@@ -209,7 +215,7 @@
 		</p>
 	</div><!-- /content -->
 	
-	<div data-role="footer">
+	<div data-role="footer" data-position="fixed" data-id="myFooter">
 		<h4>Karaoke Pi - Copyright 2013</h4>
 	</div><!-- /footer -->
 </div><!-- /page popup -->
@@ -217,7 +223,7 @@
 <!-- Start of third page: #mainQueuePage -->
 <div data-role="page" id="mainQueuePage" data-theme="a" data-add-back-btn="true">
 
-	<div data-role="header">
+	<div data-role="header" data-position="fixed">
 		<h1>Main Queue</h1>
 		<a href="#home" class="ui-btn-right" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
 	</div><!-- /header -->
@@ -256,8 +262,7 @@
 		    </ul>
 		</p>
 	</div><!-- /content -->
-	
-	<div data-role="footer">
+	<div data-role="footer" data-position="fixed" data-id="myFooter">
 		<h4>Karaoke Pi - Copyright 2013</h4>
 	</div><!-- /footer -->
 </div><!-- /page popup -->
@@ -266,7 +271,7 @@
 <!-- Start of third page: #popup -->
 <div data-role="page" id="popup">
 
-	<div data-role="header" data-theme="e">
+	<div data-role="header" data-position="fixed">
 		<h1>Dialog</h1>
 	</div><!-- /header -->
 
@@ -276,15 +281,15 @@
 		<p><a href="#home" data-rel="back" data-role="button" data-inline="true" data-icon="back">Back to page "home"</a></p>	
 	</div><!-- /content -->
 	
-	<div data-role="footer">
-		<h4>Page Footer</h4>
+	<div data-role="footer" data-position="fixed" data-id="myFooter">
+		<h4>Karaoke Pi - Copyright 2013</h4>
 	</div><!-- /footer -->
 </div><!-- /page popup -->
 
 <!-- Start of fourth page: #searchByPage -->
 <div data-role="page" id="searchByPage" data-theme="a" data-add-back-btn="true">
 
-    <div data-role="header">
+    <div data-role="header" data-position="fixed">
         <h1>Search By</h1>
 		<a href="#home" class="ui-btn-right" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
     </div>
@@ -294,15 +299,15 @@
 		<!--disabled below using css because it's not implemented yet.-->
         <p><a class="ui-disabled" href="#searchPage" data-role="button" data-transition="flow" data-theme="b">Track</a></p>	
     </div>
-    <!--<div data-role="footer">
-        <h4>Page Footer</h4>
-    </div>-->
+    <div data-role="footer" data-position="fixed" data-id="myFooter">
+		<h4>Karaoke Pi - Copyright 2013</h4>
+	</div><!-- /footer -->
 </div>
 
 <!-- Start of fourth page: #searchPage -->
 <div data-role="page" id="searchPage" data-theme="a" data-add-back-btn="true">
 
-    <div data-role="header">
+    <div data-role="header" data-position="fixed">
         <h1>Search by Artist</h1>
         <a href="#home" class="ui-btn-right" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
     </div>
@@ -311,9 +316,9 @@
         <input type="search" id="searchField" placeholder="Enter an Artist" />
 		<ul id="suggestions" data-role="listview" data-inset="true"></ul>
     </div>
-    <!--<div data-role="footer">
-        <h4>Page Footer</h4>
-    </div>-->
+    <div data-role="footer" data-position="fixed" data-id="myFooter">
+		<h4>Karaoke Pi - Copyright 2013</h4>
+	</div><!-- /footer -->
 </div>
 
 <script>
