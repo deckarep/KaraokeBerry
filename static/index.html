@@ -56,7 +56,7 @@
 			<li><a href="#favoritesPage" data-transition="flow">Favorites<span class="ui-li-count">1</span></a></li>
 		    </ul>
 		</p>
-		<p><a href="#loginDialog" data-role="button" data-icon="check" data-rel="dialog" data-iconpos="right">Login</a></p>
+		<p><a href="#" onclick="window.handleLoginRequest();" id="loginButton" data-role="button" data-icon="check" data-rel="dialog" data-iconpos="right">Login</a></p>
 		<p><a href="#searchByPage" class="ui-disabled" data-role="button" data-transition="flow" data-icon="delete" data-iconpos="right">Admin</a></p>
 		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="info" data-iconpos="right">About</a></p>
 		<p data-role="button" data-theme="e" class="myMarquee">Now performing: John Winters - Love My Way - The Psychedelic Furs</p>
@@ -119,11 +119,11 @@
 	<div data-role="content">	
 		<p>
 			<label for="text-basic">Username:</label>
-			<input type="text" name="text-basic" id="text-basic" value="">
+			<input type="text" name="text-basic" id="usernameLogin" value="">
 			<label for="password">Password:</label>
-			<input type="password" name="password" id="password" value="" autocomplete="off">
+			<input type="password" name="password" id="passwordLogin" value="" autocomplete="off">
 		</p>
-		<p><a href="#" class="show-page-loading-msg" data-role="button" data-theme="b" data-textonly="false" data-textvisible="true" data-msgtext="Please wait...">Continue</a></p>
+		<p><a href="#" onclick="window.login();" class="show-page-loading-msg" data-role="button" data-theme="b" data-textonly="false" data-textvisible="true" data-msgtext="Please wait...">Continue</a></p>
         <p><a href="#searchPage" data-rel="back" data-role="button" data-theme="a">Cancel</a></p>
 	</div><!-- /content -->
 	
@@ -303,8 +303,12 @@
 </div>
 
 <script>
+//start off logged out for the initial page load
+sessionStorage.loggedIn = "false";
 //main application logic goes here beyatch.
 (function($){
+	
+	//TODO:namespace so it's window.karaokepi.app.methodName; for everything below that is global
 	window.playSong = function(path_to_file){
 		var path = path_to_file || sessionStorage.selectedTrack;
 
@@ -333,8 +337,69 @@
 	window.cancelSelectedTrack = function(track_id){
 		//do we need this function?
 	};
-})(jQuery);
+	window.handleLoginRequest = function(){
+		if(sessionStorage.loggedIn === "true"){
+			window.logout();
+		}else{
+			window.login();
+		}
+	};
+	window.login = function(){
+		var username = $('#usernameLogin').val();
+		var password = $('#passwordLogin').val();
 
+		if(username && password){
+			$.getJSON("/login/" + username + "/" + password, function(data){
+				if(data.result == "OK"){
+					console.log(data.loggedIn);
+					$.mobile.loading( 'hide' );
+					
+					sessionStorage.loggedIn = "true";
+					sessionStorage.username = username;
+					sessionStorage.password = password;
+					
+					window.closeDialog();
+					console.log("user logged in");
+
+					window.updateLoggedInState();
+				}
+			});
+		}
+	};
+	window.logout = function(){
+		$.getJSON("/logout", function(data){
+			console.log(data);
+			if(data.result == "OK"){
+				//TODO:update ui that we're logged out
+				sessionStorage.loggedIn = "false";
+				sessionStorage.removeItem("username");
+				sessionStorage.removeItem("password");
+
+				window.updateLoggedInState();
+			}
+		});
+	};
+	window.updateAnchorText = function(selector, text){
+		$(selector + ' .ui-btn-text').text(text);
+	};
+	window.updateLoggedInState = function(){
+		if(sessionStorage.loggedIn === "true"){
+			//update button		
+			window.updateAnchorText('#loginButton', 'Logout');	
+			$('#loginButton').attr('href', '#');
+			//clear username/password
+			 $('#usernameLogin').val('');
+			 $('#passwordLogin').val('');
+		}else{
+			window.updateAnchorText('#loginButton', 'Login');	
+			$('#loginButton').attr('href', '#loginDialog');
+		}
+	};
+})(jQuery);
+$('#home').on("pageshow", function(e){
+	console.log("home shown");
+	window.updateLoggedInState();
+});
 $("#searchPage").on("pageshow", function(e) {
     console.log("Ready to bring the awesome.");
 

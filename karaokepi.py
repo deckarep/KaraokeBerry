@@ -113,20 +113,41 @@ def piaddress():
     s.close()
     return result
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        session['username'] = request.form['username']
-        return redirect(url_for('index'))
-    return '''
-        <form action="" method="post"><p><input type="text" name="username" /></p>
-        <p><input type="submit" value="login" /></p></form>'''
+def is_logged_in():
+    return not session.get("username") is None
+
+@app.route("/loginstatus")
+def login_status():
+    if is_logged_in():
+        return "User is logged in as: %s" % session['username']
+    else:
+        return "user is not logged in"
+
+@app.route("/login/<username>/<password>")
+def login(username, password):
+    if not session.get("username") is None:
+        session.pop('username', None)
+
+    session["password"] = password    
+    session['username'] = username
+    return jsonify({'result':"OK", 'loggedIn':False})
+
+#reference implementation of login
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if request.method == 'POST':
+#         session['username'] = request.form['username']
+#         return redirect(url_for('index'))
+#     return '''
+#         <form action="" method="post"><p><input type="text" name="username" /></p>
+#         <p><input type="submit" value="login" /></p></form>'''
 
 @app.route('/logout')
 def logout():
     #remove the username from the session if it's there
     session.pop('username', None)
-    return redirect(url_for('index'))        
+    return jsonify({'result':"OK"})
+    #return redirect(url_for('index'))        
 
 #example of generator, this BLOCKS all other requests until finished NOTICE the sleep
 #implies that Flask is single threaded by nature.
