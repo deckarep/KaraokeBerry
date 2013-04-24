@@ -86,6 +86,10 @@ def mobile():
 def swipe():
     return redirect(url_for('static', filename="swipe.js"))
 
+@app.route("/karaoke-star.jpg")
+def karaoke_image():
+    return redirect(url_for('static', filename="karaoke-star.jpg"))    
+
 
 @app.route("/")
 def index():
