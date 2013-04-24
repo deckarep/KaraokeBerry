@@ -385,6 +385,11 @@ sessionStorage.loggedIn = "false";
 					
 					window.closeDialog();
 					window.updateLoggedInState();
+					window.setTimeout(function(){
+						//TODO: this is a little jarring, probably remove and notify user using different means
+						window.showAlertDialog("You are now logged in!");
+					}, 500);
+					
 				}
 			});
 		}
@@ -399,7 +404,7 @@ sessionStorage.loggedIn = "false";
 				sessionStorage.removeItem("password");
 				
 				window.updateLoggedInState();
-				window.showAlertDialog("You have been logged out");
+				window.showAlertDialog("You are now logged out!");
 			}
 		});
 	};

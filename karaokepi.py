@@ -45,9 +45,7 @@ def build_song_db():
         artist, song = name.split('-')
         song = song.strip().replace('.mp3', '')
         artist = artist.strip()
-        song_db.append(
-            {'artist':artist, 'track':{'t':song,'fp':name, 'tid':000}}
-        )
+        song_db.append({'artist':artist, 'track':{'t':song,'fp':name, 'tid':000}})
 
 
 #user functionality
