@@ -10,14 +10,22 @@ import subprocess
 import urllib2
 import urllib
 import time
+import os
 
 VLC_PATH = '/Applications/VLC.app/Contents/MacOS/VLC'
+
 
 class Controller(object):
 	'''VLC based controller'''
 	
-	def __init__(self):
+	def __init__(self, root_path = None):
 		super(Controller, self).__init__()
+		
+		if root_path is None:
+			self.ROOT_PATH = '/Users/ralphcaraveo/Karaoke/'
+		else:
+			self.ROOT_PATH = root_path
+
 		self.history = []
 		self.controller_process = None
 
@@ -26,7 +34,9 @@ class Controller(object):
 
 	def command(self, commandText, path_to_file = None):
 		if self.is_alive():
-			if commandText == 'pause':
+			if commandText == 'play':
+				rc = 'pl_play'
+			elif commandText == 'pause':
 				rc = 'pl_pause'
 			elif commandText == 'fullscreen':
 				rc = 'fullscreen'
@@ -89,12 +99,16 @@ class Controller(object):
 	def prev_track(self):
 		self.command('previous')
 
-	def start(self, path_to_file):
+	def start(self, path_to_file = None):
 		'''Plays a song immediatley whether or not one is already playing'''
 		#opens in another process
-		self.controller_process = subprocess.Popen([VLC_PATH, path_to_file])		
-		self.history.append(path_to_file)        	
-		print 'Process started with file: %s' % path_to_file
+		if path_to_file is None:
+			self.controller_process = subprocess.Popen([VLC_PATH])
+			print 'Process started'		
+		else:
+			self.controller_process = subprocess.Popen([VLC_PATH, path_to_file])		
+			self.history.append(path_to_file)        	
+			print 'Process started with file: %s' % path_to_file
 
 	def is_playing(self):
 		'''Indicates whether or not vlc is in the middle of a stream'''
@@ -106,21 +120,31 @@ class Controller(object):
 
 	def quit(self):
 		'''Terminates the player instance'''
-		self.controller_process.terminate()
+		if self.isalive():
+			self.stop()
+			self.controller_process.kill() #maybe find a nicer way to shutdown .terminate() didn't work for me.
+			self.controller_process = None
 
 def main():
 	c = Controller()
-	c.start('/Users/ralphcaraveo/Karaoke/LeAnn Rimes - How Do I Live.mp3')
+	c.start()
 	
 	time.sleep(5)
-	f = '/Users/ralphcaraveo/Karaoke/Sugar Ray - Fly.mp3'
+	f = os.path.join(c.ROOT_PATH, 'Sugar Ray - Fly.mp3')
+	c.play_file(f)
+
+
+	time.sleep(5)
+	f = os.path.join(c.ROOT_PATH, 'Smash Mouth - Walkin On The Sun.mp3')
 	print f
 	c.play_file(f)
 
 	time.sleep(5)
-	f = '/Users/ralphcaraveo/Karaoke/Smash Mouth - Walkin On The Sun.mp3'
-	print f
-	c.play_file(f)
+	c.prev_track()
+	time.sleep(5)
+	c.next_track()
+
+	c.quit()
 	
 
 if __name__ == '__main__':
