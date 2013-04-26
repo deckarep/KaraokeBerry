@@ -69,10 +69,6 @@ class Controller(object):
 		'''Toggles between fullscreen and regular'''
 		self.command('fullscreen')
 
-	def enqueue_song(self, path_to_file):
-		'''Enqueue's a song to be played in the future'''
-		pass
-
 	def stop(self):
 		'''Stops current stream from playing'''
 		self.command('stop')
@@ -85,12 +81,17 @@ class Controller(object):
 	def play(self):
 		self.command('play')
 
+	#TODO!!!!!!!
+	def restart(self):
+		'''Restart the current song'''
+		pass
+
 	def play_file(self, path_to_file):
-		f = urllib.quote('file://%s' % path_to_file)
+		f = urllib.quote('file://%s' % os.path.join(self.ROOT_PATH, path_to_file))
 		self.command('playfile', f)
 
 	def enqueue_file(self, path_to_file):
-		f = urllib.quote('file://%s' % path_to_file)
+		f = urllib.quote('file://%s' % os.path.join(self.ROOT_PATH, path_to_file))
 		self.command('enqueuefile', f)
 
 	def next_track(self):
@@ -120,7 +121,7 @@ class Controller(object):
 
 	def quit(self):
 		'''Terminates the player instance'''
-		if self.isalive():
+		if self.is_alive():
 			self.stop()
 			self.controller_process.kill() #maybe find a nicer way to shutdown .terminate() didn't work for me.
 			self.controller_process = None
