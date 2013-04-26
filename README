@@ -26,7 +26,7 @@ TODO:
 3. create admin login so that only one admin can run the app
 4. integrate jquery mobile site with flask server side backend (possibly due it all through rest requests with state simply in javascript local to the page???)
 5. add the pi linux commands to this repository.
-
+6. create admin interface that looks like windows metro blocks for pause, play, restart, fullscreen toggle, etc.
 
 GETTING STARTED:
 1. navigate to localhost:5000/mobile  (to see the jquery mobile interface in action)
