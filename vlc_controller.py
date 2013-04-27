@@ -78,13 +78,15 @@ class Controller(object):
 		print 'pausing...'
 		self.command('pause')
 
-	def play(self):
+	def resume(self):
 		self.command('play')
 
 	#TODO!!!!!!!
 	def restart(self):
 		'''Restart the current song'''
-		pass
+		#TODO: test this functionality
+		self.command('stop')
+		self.command('resume')
 
 	def play_file(self, path_to_file):
 		f = urllib.quote('file://%s' % os.path.join(self.ROOT_PATH, path_to_file))

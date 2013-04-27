@@ -19,6 +19,7 @@ import time
 #flask specific imports
 from flask import Flask, session, redirect, url_for, escape, request, jsonify, Response, stream_with_context
 import vlc_controller
+import karaokestore
 
 
 SONG_PATH = '/Users/ralphcaraveo/Karaoke'
@@ -28,6 +29,7 @@ ADMIN_ACCOUNT = 'admin'
 ADMIN_PASSWORD = 'password123'
 
 karaoke_controller = vlc_controller.Controller()
+store = karaokestore.KaraokeStore()
 song_db = []
 
 app = Flask(__name__)
@@ -45,10 +47,13 @@ def build_song_db():
 
     for file_path in files:
         name = os.path.basename(file_path)
-        artist, song = name.split('-')
-        song = song.strip().replace('.mp3', '')
-        artist = artist.strip()
-        song_db.append({'artist':artist, 'track':{'t':song,'fp':name, 'tid':000}})
+        tokens = name.split('-')
+        if len(tokens) >= 2:
+            artist = tokens[-2]
+            song = tokens[-1]
+            song = song.strip().replace('.mp3', '')
+            artist = artist.strip()
+            song_db.append({'artist':artist, 'track':{'t':song,'fp':name, 'tid':000}})
 
 
 #static files test
@@ -100,6 +105,7 @@ def piaddress():
 def is_logged_in():
     return not session.get("username") is None
 
+
 @app.route("/loginstatus")
 def login_status():
     if is_logged_in():
@@ -107,31 +113,31 @@ def login_status():
     else:
         return "user is not logged in"
 
+
 @app.route("/login/<username>/<password>")
 def login(username, password):
     if not session.get("username") is None:
         session.pop('username', None)
 
-    session["password"] = password    
+    session_id = store.create_user(username)
+    session['id'] = session_id
     session['username'] = username
-    return jsonify({'result':"OK", 'loggedIn':False})
+    session["password"] = password   
 
-#reference implementation of login
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     if request.method == 'POST':
-#         session['username'] = request.form['username']
-#         return redirect(url_for('index'))
-#     return '''
-#         <form action="" method="post"><p><input type="text" name="username" /></p>
-#         <p><input type="submit" value="login" /></p></form>'''
+    return jsonify({'result':"OK", 'session_id':session_id})
+
 
 @app.route('/logout')
 def logout():
-    #remove the username from the session if it's there
-    session.pop('username', None)
+    store.remove_user(session['id'])
+    clear_session()
     return jsonify({'result':"OK"})
-    #return redirect(url_for('index'))        
+
+
+def clear_session():
+    session.pop('username', None)       
+    session.pop('id', None)
+    session.pop('password', None)
 
 #example of generator, this BLOCKS all other requests until finished NOTICE the sleep
 #implies that Flask is single threaded by nature.
@@ -154,10 +160,39 @@ def streamed_response():
         time.sleep(5)
         yield '!'
     return Response(stream_with_context(generate()))    
+
+@app.route("/adminpage")
+def admin_page():
+    #TODO: make sure user is admin
+    performances = store.list_all_performances()
+    if len(performances) > 0:
+        nextPerformance = performances[0]
+        return jsonify(dict(result="OK", nickname=nextPerformance[0], track=nextPerformance[1]))
+
+    #No performances case
+    return jsonify(dict(result="OK"))
+
+@app.route("/adminstartnextperformance")
+def admin_start_next_performance():
+    performance = store.next_performance()
+    if performance:
+        karaoke_controller.play_file(performance[1])
+    return jsonify(dict(result="OK"))
     
 @app.route("/queue/<artist>")
 def queue_artist(artist):
-    karaoke_controller.enqueue_file(artist)
+    user_id = session['id']
+    store.queue_performance(session['id'], artist)
+    return jsonify(dict(result="OK", queue=store.list_user_performances(user_id)))
+
+@app.route("/userqueue")
+def list_user_queue():
+    user_id = session['id']
+    return jsonify(dict(result="OK", queue=store.list_user_performances(user_id)))    
+
+@app.route("/mainqueue")
+def list_main_queue():
+    return jsonify(dict(result="OK", queue=store.list_all_performances()))    
 
 @app.route("/play/<artist>")
 def play_artist(artist):
@@ -166,7 +201,7 @@ def play_artist(artist):
 
 @app.route("/resume")
 def resume_player():
-    karaoke_controller.play()
+    karaoke_controller.resume()
     return jsonify(dict(result="OK"))
 
 @app.route("/pause")

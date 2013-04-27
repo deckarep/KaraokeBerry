@@ -90,7 +90,7 @@
 		    </ul>
 		</p>
 		<p><a href="#" onclick="window.handleLoginRequest();" id="loginButton" data-role="button" data-icon="check" data-rel="dialog" data-iconpos="right">Login</a></p>
-		<p><a href="#searchByPage" class="ui-disabled" data-role="button" data-transition="flow" data-icon="delete" data-iconpos="right">Admin</a></p>
+		<p><a href="#adminPage" data-role="button" data-transition="flow" data-icon="delete" data-iconpos="right">Admin</a></p>
 		<p><a href="#searchByPage" data-role="button" data-transition="flow" data-icon="info" data-iconpos="right">About</a></p>
 		<p data-role="button" data-theme="e" class="myMarquee">Now performing: John Winters - Love My Way - The Psychedelic Furs</p>
 	</div><!-- /content -->
@@ -109,7 +109,7 @@
 
 	<div data-role="content" data-theme="a">	
 		<h3 id="trackDialogArtistTitle"></h3>
-        <p><a href="#" class="ui-disabled" data-role="button" data-theme="b" data-icon="plus" data-iconpos="right">Add to My Queue</a></p>
+        <p><a href="#" onclick="window.queueSong();" data-role="button" data-theme="b" data-icon="plus" data-iconpos="right">Add to My Queue</a></p>
 		<p><a href="#" class="ui-disabled" data-role="button" data-theme="b" data-icon="star" data-iconpos="right">Add to Favorites</a></p>
 		<p><a href="#" onclick="window.playSong();" data-role="button" data-theme="a" data-icon="plus" data-iconpos="right">Admin:Play</a></p>
         <p><a href="#" onclick="window.unselectTrack();" data-role="button" data-theme="a">Cancel</a></p>
@@ -148,12 +148,11 @@
 	<div data-role="content">	
 		<p>Your songs will automatically be submitted to the Main Queue when the Main Queue requests your next song!</p>
 		<p>
-			<ol data-role="listview" data-inset="true" data-filter="true">
-				<li>Drive - The Cars</li>
-				<li>Valerie - Amy Winehouse</li>
-				<li>Come Undone - Duran Duran</li>
+			<ol id="myQueueListView" data-role="listview" data-inset="true" data-filter="true">
+				<!--<li>Drive - The Cars</li>-->
 			</ol>
 		</p>
+		<p>[[refresh button]]</p>
 	</div><!-- /content -->
 	
 	<div data-role="footer" data-position="fixed" data-id="myFooter">
@@ -264,56 +263,19 @@
 	<div data-role="content">	
 		<p>Who's up next! Get ready!</p>
 		<p>
-		    <ul data-role="listview" data-inset="true">
+		    <ol id="mainQueueListView" data-role="listview" data-inset="true">
 		       <li>
-		       		<a href="#">
-		       			<h2>Sophia P.</h2>
-		       			<!--number perhaps represents how many times the song has been sung-->
-		       			<!-- <p class="ui-li-aside">10</p> -->
-		       			<p><strong>Song:</strong> Step off the Train</p><p><strong>Original Artist:</strong> Ready for the World</p>
-		       		</a>
-			   </li>
-			   <li>
-		       		<a href="#">
-		       			<h2>Nicole C.</h2>
-		       			<!--number perhaps represents how many times the song has been sung-->
-		       			<!--<p class="ui-li-aside">10</p>-->
-		       			<p><strong>Song:</strong>Valerie</p><p><strong>Original Artist:</strong>Amy Winehouse</p>
-		       		</a>
-			   </li>
-			   <li>
-		       		<a href="#">
-		       			<h2>Nicole C.</h2>
-		       			<!--number perhaps represents how many times the song has been sung-->
-		       			<!--<p class="ui-li-aside">10</p>-->
-		       			<p><strong>Song:</strong>Valerie</p><p><strong>Original Artist:</strong>Amy Winehouse</p>
-		       		</a>
+	       			<h2>Sophia P.</h2>
+	       			<!--number perhaps represents how many times the song has been sung-->
+	       			<!-- <p class="ui-li-aside">10</p> -->
+	       			<p>Track: Some track</p>
 			   </li>
 			   <li>
 		       		Load More...
 			   </li>
-		    </ul>
+		    </ol>
 		</p>
 	</div><!-- /content -->
-	<div data-role="footer" data-position="fixed" data-id="myFooter">
-		<h4>Karaoke Pi - Copyright 2013</h4>
-	</div><!-- /footer -->
-</div><!-- /page popup -->
-
-
-<!-- Start of third page: #popup -->
-<div data-role="page" id="popup">
-
-	<div data-role="header" data-position="fixed">
-		<h1>Dialog</h1>
-	</div><!-- /header -->
-
-	<div data-role="content" data-theme="d">	
-		<h2>Popup</h2>
-		<p>I have an id of "popup" on my page container and only look like a dialog because the link to me had a <code>data-rel="dialog"</code> attribute which gives me this inset look and a <code>data-transition="pop"</code> attribute to change the transition to pop. Without this, I'd be styled as a normal page.</p>		
-		<p><a href="#home" data-rel="back" data-role="button" data-inline="true" data-icon="back">Back to page "home"</a></p>	
-	</div><!-- /content -->
-	
 	<div data-role="footer" data-position="fixed" data-id="myFooter">
 		<h4>Karaoke Pi - Copyright 2013</h4>
 	</div><!-- /footer -->
@@ -354,6 +316,33 @@
 	</div><!-- /footer -->
 </div>
 
+
+<!-- Start of fourth page: #adminPage -->
+<div data-role="page" id="adminPage" data-theme="a" data-add-back-btn="true">
+
+    <div data-role="header" data-position="fixed">
+        <h1>Admin</h1>
+        <a href="#home" class="ui-btn-right" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+    </div>
+    <div data-role="content">
+    	<p>
+    		<h2>Next: <span id="nextAdmin"></span></h2>
+    		<h3>Track: <span id="trackAdmin">The Love Shack</span></h3>
+    	</p>
+		<p><a href="#" onclick="window.adminStartPerformance();" data-role="button" data-transition="flow" data-theme="b">Start Next Track</a></p>
+		<p><a href="#" onclick="window.adminToggleFullscreen();" data-role="button" data-transition="flow" data-theme="b">Toggle FullScreen</a></p>
+		<p><a href="#" onclick="window.adminTogglePause();" data-role="button" data-transition="flow" data-theme="b">Toggle Pause</a></p>
+		<p><a href="#" onclick="window.adminRestart();" data-role="button" data-transition="flow" data-theme="b">Restart</a></p>
+		<!--show who's next, need a peek method-->		        
+        <!--count of logged on users-->
+		<!--log out user-->
+		<!--next, prev-->
+    </div>
+    <div data-role="footer" data-position="fixed" data-id="myFooter">
+		<h4>Karaoke Pi - Copyright 2013</h4>
+	</div><!-- /footer -->
+</div>
+
 <script>
 //start off logged out for the initial page load
 sessionStorage.loggedIn = "false";
@@ -367,6 +356,25 @@ sessionStorage.loggedIn = "false";
 		$.getJSON('/play/' + path, function(data){
 			console.log(data);
 		});
+	};
+	window.queueSong = function(path_to_file){
+		if(sessionStorage.loggedIn === "true"){
+			var path = path_to_file || sessionStorage.selectedTrack;
+
+			$.getJSON('/queue/' + path, function(data){
+				if(data.result === "OK"){
+					console.log(data);	
+					
+					window.closeDialog();
+					window.setTimeout(function(){
+						window.showAlertDialog("Your song has been added");
+					},500);
+				}
+			});	
+		}else{
+			//must be logged in!
+			showAlertDialog("You must be logged in!");
+		}
 	};
 	window.openPage = function(page){
 		if(sessionStorage.loggedIn === "true"){
@@ -420,29 +428,54 @@ sessionStorage.loggedIn = "false";
 					sessionStorage.loggedIn = "true";
 					sessionStorage.username = username;
 					sessionStorage.password = password;
-					
+					sessionStorage.session_id = data.session_id;
+
 					window.closeDialog();
 					window.updateLoggedInState();
 					window.setTimeout(function(){
 						//TODO: this is a little jarring, probably remove and notify user using different means
 						window.showAlertDialog("You are now logged in!");
 					}, 500);
-					
 				}
 			});
 		}
 	};
 	window.logout = function(){
 		$.getJSON("/logout", function(data){
-			console.log(data);
-			if(data.result == "OK"){
-				
+			if(data.result === "OK"){
 				sessionStorage.loggedIn = "false";
 				sessionStorage.removeItem("username");
 				sessionStorage.removeItem("password");
+				sessionStorage.removeItem("session_id");
 				
 				window.updateLoggedInState();
 				window.showAlertDialog("You are now logged out!");
+			}
+		});
+	};
+	window.updateMainQueueListView = function(){
+		$.getJSON("/mainqueue", function(data){
+			if(data.result === "OK" && data.queue){
+				var html = [];
+				for(var i = 0; i < data.queue.length; i++){
+					html.push('<li><h2>'+ data.queue[i][0] +'</h2><p>Track: '+ data.queue[i][1] +'</p></li>');
+				}
+				var lv = $('#mainQueueListView');
+				lv.html(html.join(''));
+                lv.listview("refresh");
+			}
+		});
+	};
+	window.updateMyQueueListView = function(){
+		$.getJSON("/userqueue", function(data){
+			if(data.result === "OK" && data.queue){
+				var html = [];
+				for(var i = 0; i < data.queue.length; i++){
+					html.push('<li>' + data.queue[i][1] + '</li>');
+				}
+				var myQueueListView = $('#myQueueListView');
+				myQueueListView.html(html.join(''));
+                myQueueListView.listview("refresh");
 			}
 		});
 	};
@@ -463,6 +496,41 @@ sessionStorage.loggedIn = "false";
 			$('#loginButton').attr('href', '#loginDialog');
 		}
 	};
+	window.updateAdminPage = function(){
+		$.getJSON("/adminpage", function(data){
+			if(data.result === "OK"){
+				if(data.nickname && data.track){
+					$('#nextAdmin').text(data.nickname);
+					$('#trackAdmin').text(data.track);
+				}else{
+					$('#nextAdmin').text('[empty]');
+					$('#trackAdmin').text('[empty]');
+				}
+			}
+		});
+	};
+	window.adminStartPerformance = function(){
+		$.getJSON("/adminstartnextperformance", function(data){
+			if(data.result === "OK"){
+				//TODO: update banner with info
+				window.updateAdminPage();
+			}
+		});
+	};
+	window.adminToggleFullscreen = function(){
+		$.getJSON("/fullscreen", function(data){
+			if(data.result === "OK"){
+				//TODO: update banner with info
+			}
+		});	
+	}
+	window.adminTogglePause = function(){
+		$.getJSON("/pause", function(data){
+			if(data.result === "OK"){
+				//TODO: update banner with info
+			}
+		});	
+	}
 })(jQuery);
 $('#home').on("pageshow", function(e){
 	window.updateLoggedInState();
@@ -484,7 +552,6 @@ $("#searchPage").on("pageshow", function(e) {
                 if(res && res.results && res.results.length > 0){
                     var html = [];
                     for(var i=0, len=res.results.length; i<len; i++){
-						
 						var currentArtist = res.results[i];
 						var currentTrack = currentArtist.track;
 						var path = currentTrack.fp;
@@ -506,8 +573,17 @@ $("#searchPage").on("pageshow", function(e) {
     	sugList.listview("refresh");
 	});
 });
+$("#adminPage").on("pagebeforeshow", function(e){
+	window.updateAdminPage();
+});
+$("#myQueuePage").on("pagebeforeshow", function(e){
+	window.updateMyQueueListView();
+});
+$("#mainQueuePage").on("pagebeforeshow", function(e){
+	window.updateMainQueueListView();
+});
 //example of loading icon
-$(document).on( "click", ".show-page-loading-msg", function(){
+$(document).on("click", ".show-page-loading-msg", function(){
 	//alert('hi');
     var $this = $(this),
         theme = $this.jqmData("theme") || $.mobile.loader.prototype.options.theme,

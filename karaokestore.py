@@ -4,53 +4,56 @@ import json
 
 #in memory store
 
-class UserNotDefinedException(Exception):
-	def __init__(self, user_id):
-		self.user_id = user_id
-	def __str__(self):
-		return repr(self.user_id)
-
-
 class KaraokeStore(object):
 	
 	def __init__(self):
-		self.users = dict()
-		self.main_queue = deque()
-		self.history_of_performances = [] #TODO: implement the performance history
-		self.performances = dict()
-		self.current_performance = None
+		self.users = dict() #key:user_id, value:User object
+		self.performances = dict() #key:performance_id, value:(user_id, path_to_file)
+		self.main_queue = deque() #performance_id
+		self.current_performance = None #performance_id
 	
-	def add_perfomance(self, performance):
-		if not performance.user_id in self.users:
-			raise UserNotDefinedException(performance.user_id)
 
-		self.performances[performance.performance_id] = performance
-		self.main_queue.append(performance.performance_id)
+	def queue_performance(self, user_id, path_to_file):
+		performance_id = str(uuid.uuid4())
+		self.performances[performance_id] = (user_id, path_to_file)
+		self.main_queue.append(performance_id)
+		self.users[user_id].queue.append(performance_id)
+		return performance_id		
 
 	def next_performance(self):
-		'''grabs the next performance from the queue to play the song'''
 		if len(self.main_queue) > 0:
-			id = self.main_queue.popleft()
-			performance = self.performances[id]
-			del self.performances[id]
+			performance_id = self.main_queue.popleft()
+			performance = self.performances[performance_id]
+			del self.performances[performance_id]
 			self.current_performance = performance
 			return performance
 		return None
 
+
 	def remove_performance(self, performance_id):
-		'''removes a given performance from the main queue'''
-		self.main_queue.remove(performance_id)
-		del self.performances[id]
+		if performance_id in self.performances:
+			self.main_queue.remove(performance_id)
+			del self.performances[performance_id]
 		
-	def clear_performances(self):
-		self.main_queue = deque()
-		self.performances = dict()
 
 	def list_all_performances(self):
 		snapshot = []
-		for id in self.main_queue:
-			snapshot.append(self.performances[id])
+		for performance_id in self.main_queue:
+			user_id, path_to_file = self.performances[performance_id]
+			snapshot.append((self.users[user_id].nickname, path_to_file))
 		return snapshot
+
+
+	def list_user_performances(self, user_id):
+		if user_id not in self.users:
+			return []
+
+		snapshot = []
+		for performance_id in self.users[user_id].queue:
+			if performance_id in self.performances:
+				snapshot.append(self.performances[performance_id])
+		return snapshot
+
 
 	def create_user(self, nickname):
 		id = str(uuid.uuid4())
@@ -58,13 +61,22 @@ class KaraokeStore(object):
 		self.users[id] = user
 		return id
 
-	def remove_user(self, id):
-		if id in self.users:
-			del self.users[id]
+
+	def remove_user(self, user_id):
+		if user_id in self.users:
+			#first remove all performances for a given user
+			user = self.users[user_id]
+			if len(user.queue) > 0:
+				for performance_id in user.queue:
+					self.remove_performance(performance_id)
+		
+			#then remove user
+			del self.users[user_id]
+
 
 	def list_all_users(self):
 		snapshot = []
-		for user in self.users.items():
+		for user in self.users.values():
 			snapshot.append(user)
 		return snapshot
 
@@ -77,6 +89,7 @@ class User(object):
 	def __init__(self, id, nickname):
 		self.id = id
 		self.nickname = nickname
+		self.queue = deque() #performance_id
 
 	def __repr__(self):
 		return self.__str__()
@@ -85,35 +98,8 @@ class User(object):
 		return '{\"id\":\"%s\", \"nickname\":\"%s\"}' % (self.id, self.nickname)
 
 
-class Performance(object):
-	"""docstring for Performance"""
-	def __init__(self, user_id, song):
-		super(Performance, self).__init__()
-		self.performance_id = str(uuid.uuid4())
-		self.user_id = user_id
-		self.song = song
-
-	def __repr__(self):
-		return self.__str__()
-
-	def __str__(self):
-		return '{\"performance_id\":\"%s\", \"user_id\":\"%s\", \"song\":%s}' % (self.performance_id, self.user_id, self.song)
-
-
-class KaraokeTrack(object):
-	"""docstring for Song"""
-	def __init__(self, path, name, artist):
-		self.path = path
-		self.name = name
-		self.artist = artist
-
-	def __repr__(self):
-		return self.__str__()
-
-	def __str__(self):
-		return '{\"name\":\"%s\", \"path\":\"%s\", \"artist\":\"%s\"}' % (self.name, self.path, self.artist)
-
 def main():
+
 	#test here
 	store = KaraokeStore()
 	
@@ -123,39 +109,29 @@ def main():
 	ronnie_id = store.create_user("Ronnie")
 	lynda_id = store.create_user("Lynda")
 
-	#create tracks
-	trackA = KaraokeTrack("/files/a.mp3", "Prince", "Purple Rain")
-	trackB = KaraokeTrack("/files/b.mp3", "Billy Idol", "Eyes without a Face")
-	trackC = KaraokeTrack("/files/c.mp3", "The Doors", "Break On Through")
-	trackD = KaraokeTrack("/files/d.mp3", "Deep Purple", "Smoke on the Water")
+	store.queue_perfomance(ralph_id, '/files/white wedding.mp3')
+	store.queue_perfomance(jim_id, '/files/abc.mp3')
+	abba_performance = store.queue_perfomance(lynda_id, '/files/abba.mp3')
+	store.queue_perfomance(ralph_id, '/files/break on through.mp3')
 
-	#create performances
-	performanceA = Performance(ralph_id, trackA)
-	performanceB = Performance(lynda_id, trackD)
-	performanceC = Performance(ronnie_id, trackB)
-	
-	#add performances
-	store.add_perfomance(performanceA)
-	store.add_perfomance(Performance(lynda_id, trackD))
-	store.add_perfomance(Performance(ronnie_id, trackB))
+	print "list all****"
+	for s, v in store.list_all_performances():
+		print s, v
 
-	#list state of store
-	#print store.list_all_users()
-	print store.list_all_performances()
+	print "list user ralph****"
+	for s, v in store.list_user_performances(ralph_id):
+		print s, v
 
-	store.next_performance()
+	print "remove performance***"
+	store.remove_performance(abba_performance)
 
-	print store.list_all_performances()
+	print "list all****"
+	for s, v in store.list_all_performances():
+		print s, v
 
-	store.next_performance()
-
-	#print store.list_all_performances()
-
-	store.next_performance()
-
-	#print store.list_all_performances()
-
-	store.next_performance()
+	print "list users***"
+	for u in store.list_all_users():
+		print u
 
 if __name__ == '__main__':
 	main()
