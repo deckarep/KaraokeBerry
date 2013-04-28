@@ -22,6 +22,9 @@ Currently, all of this works within a users local lan.  None of the code calls o
 
 So please keep in mind, that with the Pi's limited hardware resources, you can't host a party that has 1000's of singers....but probably a small medium sized group is fine.  This is all speculation, I haven't benchmarked anything.
 
+## Where are the unit-tests? I don't use software that doesn't have unit-tests.
+
+That's fine by me.  =)
 
 ## Initial Setup
 
