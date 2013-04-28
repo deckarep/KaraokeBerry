@@ -1,6 +1,19 @@
-App: KaraokePi
+DISCLAIMER:
 
-Desc: KaraokePi is a webserver app that will play Karaoke CDG/MP3 files using the HDMI output and audio output of the Raspberry Pi.
+I just added this to github.com, a lot of clean-up needs to take place, refactoring, documentation, markdown, etc.  Please do not use this
+code-base as an example of how to build a robust, secure site.  I am building this as fast as I can to get my thoughts down
+and this is my weekend-warrior project for my wife who love's Karaoke.  I'm building it from her.  If you'd like to join in on the fun please fork and contribute to cleaning things up.
+
+The main thing I need to do is to create a new controller for the Raspberry Pi that will play the Karaoke files through the PyKaraoke project which is also on github.
+
+Thanks
+
+-Ralph
+
+
+App: KaraokeBerry
+
+Desc: KaraokeBerry is a webserver app that will play Karaoke CDG/MP3 files using the HDMI output and audio output of the Raspberry Pi.
 
 Initial Setup:
 
