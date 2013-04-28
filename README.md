@@ -28,8 +28,13 @@ That's fine by me.  =)
 
 ## Software used
 
-[x] - Test
-[x] - Test two
+- [x] Flask
+- [x] Gevent
+- [x] Python
+- [x] VLC Media Player
+- [x] JQuery Mobile 1.3
+- [x] Swipe.js
+
  
 ## Initial Setup
 
