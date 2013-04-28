@@ -26,6 +26,11 @@ So please keep in mind, that with the Pi's limited hardware resources, you can't
 
 That's fine by me.  =)
 
+## Software used
+
+[x] - Test
+[x] - Test two
+ 
 ## Initial Setup
 
 From fresh install of Raspbian
