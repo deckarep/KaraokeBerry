@@ -330,9 +330,11 @@
     		<h3>Track: <span id="trackAdmin">The Love Shack</span></h3>
     	</p>
 		<p><a href="#" onclick="window.adminStartPerformance();" data-role="button" data-transition="flow" data-theme="b">Start Next Track</a></p>
-		<p><a href="#" onclick="window.adminToggleFullscreen();" data-role="button" data-transition="flow" data-theme="b">Toggle FullScreen</a></p>
-		<p><a href="#" onclick="window.adminTogglePause();" data-role="button" data-transition="flow" data-theme="b">Toggle Pause</a></p>
+		<p><a href="#" onclick="window.adminCommand('fullscreen');" data-role="button" data-transition="flow" data-theme="b">Toggle FullScreen</a></p>
+		<p><a href="#" onclick="window.adminCommand('pause');" data-role="button" data-transition="flow" data-theme="b">Toggle Pause</a></p>
 		<p><a href="#" onclick="window.adminRestart();" data-role="button" data-transition="flow" data-theme="b">Restart</a></p>
+		<p><a href="#" onclick="window.adminCommand('startplayer');" data-role="button" data-transition="flow" data-theme="b">Start Player</a></p>
+		<p><a href="#" onclick="window.adminCommand('shutdown');" data-role="button" data-transition="flow" data-theme="b">Shutdown Player</a></p>
 		<!--show who's next, need a peek method-->		        
         <!--count of logged on users-->
 		<!--log out user-->
@@ -517,20 +519,13 @@ sessionStorage.loggedIn = "false";
 			}
 		});
 	};
-	window.adminToggleFullscreen = function(){
-		$.getJSON("/fullscreen", function(data){
+	window.adminCommand = function(command){
+		$.getJSON("/" + command, function(data){
 			if(data.result === "OK"){
 				//TODO: update banner with info
 			}
 		});	
-	}
-	window.adminTogglePause = function(){
-		$.getJSON("/pause", function(data){
-			if(data.result === "OK"){
-				//TODO: update banner with info
-			}
-		});	
-	}
+	};
 })(jQuery);
 $('#home').on("pageshow", function(e){
 	window.updateLoggedInState();
@@ -548,8 +543,9 @@ $("#searchPage").on("pageshow", function(e) {
             sugList.html("");
             sugList.listview("refresh");
         } else {
+        	text = text.toLowerCase();
             $.get("/search/" + text, function(res, code) {
-                if(res && res.results && res.results.length > 0){
+                if(res && res.results && res.keyword === text && res.results.length > 0){
                     var html = [];
                     for(var i=0, len=res.results.length; i<len; i++){
 						var currentArtist = res.results[i];
