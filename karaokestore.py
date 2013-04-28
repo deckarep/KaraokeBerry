@@ -11,19 +11,48 @@ class KaraokeStore(object):
 		self.performances = dict() #key:performance_id, value:(user_id, path_to_file)
 		self.main_queue = deque() #performance_id
 		self.current_performance = None #performance_id
+		self.performers = set()
 	
 
 	def queue_performance(self, user_id, path_to_file):
 		performance_id = str(uuid.uuid4())
 		self.performances[performance_id] = (user_id, path_to_file)
-		self.main_queue.append(performance_id)
+		
+
+		self.add_performer(user_id)
+		self.update_all_queues()
+		#self.main_queue.append(performance_id)
+
+		#trying to build functionality where we throttle user's adding to main_queue
+		#logic: we want people to add as much to their user queue as they want
+		#however, we don't want to allow someone to bombard the system so they can only
+		#have one track in the main queue ever, after they are done singing, their next
+		#song in their user queue is placed in the main queue
+		#this will allow for fairness in rotation
+
 		self.users[user_id].queue.append(performance_id)
 		return performance_id		
+
+	def add_performer(user_id):
+		if user_id not in self.performers:
+			self.main_queue.append(performance_id)
+			self.performers.add(user_id)
+
+	def remove_performer(user_id):
+		if user_id in self.performers:
+			self.performers.remove(user_id)
+
+	def update_all_queues():
+		for user in self.users:
+			if (user.id not in self.performers) and len(user.queue) > 0:
+				performance_id = user.queue.popleft()
+				self.main_queue.append(performance_id)
 
 	def next_performance(self):
 		if len(self.main_queue) > 0:
 			performance_id = self.main_queue.popleft()
 			performance = self.performances[performance_id]
+			remove_performer(performance[0])
 			del self.performances[performance_id]
 			self.current_performance = performance
 			return performance
