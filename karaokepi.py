@@ -42,6 +42,8 @@ def initialize():
     karaoke_controller.start()
     build_song_db()
 
+
+@app.route("/build")
 def build_song_db():
     global song_db
     files = glob.glob(os.path.join(SONG_PATH, '*.mp3'))
@@ -54,8 +56,8 @@ def build_song_db():
             song = tokens[-1]
             song = song.strip().replace('.mp3', '')
             artist = artist.strip()
-            song_db.append({'artist':artist.replace("'", "\\'"), 'track':{'t':song.replace("'", "\\'"),'fp':name.replace("'", "\\'"), 'tid':000}})
-
+            song_db.append({'name':name.replace('.mp3', ''), 'artist':artist, 'track':{'t':song,'fp':name.replace("'", "\\'"), 'tid':000}})
+    return jsonify(dict(result="OK"))
 
 #static files test
 @app.route("/mobile")
@@ -87,21 +89,23 @@ def songs():
 #figure out a better means
 @app.route("/search/<keyword>")
 def search(keyword):
-    if keyword is not None and len(keyword) > 3:
-        keyword = keyword.lower()
-    
     resultlist = []
+
+    if keyword is not None:
+        keyword = keyword.lower()
+    else:
+        return jsonify({'results':resultlist, 'keyword':keyword})
     
     count = 0
     for coll in song_db:
-        if keyword in coll['artist'].lower():  
+        if coll['name'].lower().startswith(keyword):
             if count > 20:
                 break;
             else:
                 resultlist.append(coll)
                 count+=1
 
-    return jsonify({'results':resultlist})
+    return jsonify({'results':resultlist, 'keyword':keyword})
      
 @app.route('/piaddress')
 def piaddress():
