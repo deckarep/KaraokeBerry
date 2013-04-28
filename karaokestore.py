@@ -2,6 +2,7 @@ import uuid
 from collections import deque
 import json
 
+
 #in memory store
 
 class KaraokeStore(object):
@@ -11,7 +12,7 @@ class KaraokeStore(object):
 		self.performances = dict() #key:performance_id, value:(user_id, path_to_file)
 		self.main_queue = deque() #performance_id
 		self.current_performance = None #performance_id
-		self.performers = set()
+		self.performers = set() #user_id's of currently queued singers
 	
 
 	def queue_performance(self, user_id, path_to_file):
@@ -19,7 +20,7 @@ class KaraokeStore(object):
 		self.performances[performance_id] = (user_id, path_to_file)
 		
 
-		self.add_performer(user_id)
+		self.add_performer(user_id, performance_id)
 		self.update_all_queues()
 		#self.main_queue.append(performance_id)
 
@@ -33,26 +34,29 @@ class KaraokeStore(object):
 		self.users[user_id].queue.append(performance_id)
 		return performance_id		
 
-	def add_performer(user_id):
+	def add_performer(self, user_id, performance_id):
 		if user_id not in self.performers:
 			self.main_queue.append(performance_id)
 			self.performers.add(user_id)
 
-	def remove_performer(user_id):
+	def remove_performer(self, user_id):
 		if user_id in self.performers:
 			self.performers.remove(user_id)
 
-	def update_all_queues():
-		for user in self.users:
-			if (user.id not in self.performers) and len(user.queue) > 0:
+	def update_all_queues(self):
+		for user_id in self.users:
+			if (user_id not in self.performers) and len(user.queue) > 0:
 				performance_id = user.queue.popleft()
 				self.main_queue.append(performance_id)
+				self.add_performer(user_id, performance_id)
 
+	#BROKEN, it's fetching next from main_queue but we need to take it from the user_queue with the oldest timestamp
 	def next_performance(self):
+		self.update_all_queues()
 		if len(self.main_queue) > 0:
 			performance_id = self.main_queue.popleft()
 			performance = self.performances[performance_id]
-			remove_performer(performance[0])
+			self.remove_performer(performance[0])
 			del self.performances[performance_id]
 			self.current_performance = performance
 			return performance
