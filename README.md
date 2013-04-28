@@ -24,8 +24,8 @@ So please keep in mind, that with the Pi's limited hardware resources, you can't
 
 ## Target Platforms
 
-- [x] OSX Mountain Lion (currently working)
-- [] Raspberry Pi (not yet working)
+- OSX Mountain Lion (currently working)
+- Raspberry Pi (not yet working)
 
 ## Where are the unit-tests? I don't use software that doesn't have unit-tests.
 
@@ -33,12 +33,12 @@ That's fine by me.  =)
 
 ## Software used
 
-- [x] Python
-- [x] Flask
-- [x] Gevent
-- [x] VLC Media Player
-- [x] JQuery Mobile 1.3
-- [x] Swipe.js
+- Python
+- Flask
+- Gevent
+- VLC Media Player
+- JQuery Mobile 1.3
+- Swipe.js
 
  
 ## Initial Setup
