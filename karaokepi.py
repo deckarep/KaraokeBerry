@@ -18,6 +18,7 @@ import time
 
 #flask specific imports
 from flask import Flask, session, redirect, url_for, escape, request, jsonify, Response, stream_with_context
+from werkzeug.debug import DebuggedApplication
 import vlc_controller
 import karaokestore
 
@@ -53,7 +54,7 @@ def build_song_db():
             song = tokens[-1]
             song = song.strip().replace('.mp3', '')
             artist = artist.strip()
-            song_db.append({'artist':artist, 'track':{'t':song,'fp':name, 'tid':000}})
+            song_db.append({'artist':artist.replace("'", "\\'"), 'track':{'t':song.replace("'", "\\'"),'fp':name.replace("'", "\\'"), 'tid':000}})
 
 
 #static files test
@@ -82,15 +83,24 @@ def songs():
     files = glob.glob(os.path.join(SONG_PATH, '*.cdg'))
     return jsonify(dict(count=len(files), songs=files))
 
+#TODO:this is just ultra naive implementation of O(n) linear search using Python 'in' keyword
+#figure out a better means
 @app.route("/search/<keyword>")
 def search(keyword):
-    if keyword is not None:
+    if keyword is not None and len(keyword) > 3:
         keyword = keyword.lower()
+    
     resultlist = []
     
+    count = 0
     for coll in song_db:
         if keyword in coll['artist'].lower():  
-            resultlist.append(coll)
+            if count > 20:
+                break;
+            else:
+                resultlist.append(coll)
+                count+=1
+
     return jsonify({'results':resultlist})
      
 @app.route('/piaddress')
@@ -225,6 +235,10 @@ def fullscreen():
     return 'toggled full screen'    
 
 if __name__ == "__main__":
+
+    #line enables the werkzeug debugger with other middleware like gevent wsgiserver
+    app = DebuggedApplication(app, evalex=True)
+
     http_server = WSGIServer(('', 5555), app)  #can i run gevent on raspberry pi?
     http_server.serve_forever()
     #flask style
