@@ -1,6 +1,10 @@
+import os
 import pycdg
 
-player = pycdg.cdgPlayer('pokerface.cdg', None)
+
+
+
+player = pycdg.cdgPlayer(os.path.expanduser('~/pokerface.cdg'), None)
 player.Play()
 
 POLL_AMOUNT = 1/10 #must be at least 100ms or less 1 second divided by 10
