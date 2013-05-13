@@ -241,9 +241,10 @@ def fullscreen():
 if __name__ == "__main__":
 
     #line enables the werkzeug debugger with other middleware like gevent wsgiserver
+    print 'Running KaraokeBerry on port 5555.'
     app = DebuggedApplication(app, evalex=True)
 
-    http_server = WSGIServer(('', 5555), app)  #can i run gevent on raspberry pi?
+    http_server = WSGIServer(('', 5555), app)  #can i run gevent on raspberry pi? Yes! Already done.
     http_server.serve_forever()
     #flask style
     #app.run('0.0.0.0', port=5555)

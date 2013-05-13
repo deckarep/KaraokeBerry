@@ -46,9 +46,14 @@ That's fine by me.  =)
 From fresh install of Raspbian
 
     sudo apt-get update (installs latest OS)
+    sudo apt-get install python-dev
+    sudo apt-get install libevent-dev
     sudo apt-get install pip
     sudo apt-get install git-core
     sudo apt-get install pykaraoke (installs in main site-packages)
+
+    pip install flask
+    pip install gevent
 
 create a virtualenv (make sure that you are using site-packages otherwise can't reference pykaraoke)
 7. go to Desktop
