@@ -1,6 +1,6 @@
-# KaraokeBerry
+# KaraokeBerry 0.1
 
-Host a Karaoke party on the Raspberry Pi.
+Host a Karaoke party on your Raspberry Pi.
 
 ## What is KaraokeBerry?
 
@@ -10,9 +10,9 @@ A web-based app that will play Karaoke CDG/MP3 files using the HDMI output and a
 
 The sytem is not yet completely built out to work on the Raspberry Pi.  All development has been done so far on a Mac running Mountain Lion.  It's currently working using a VLC remote controller that I built but I have to create one for the Raspberry Pi still.  This involves probably using PyKaraoke and somehow hooking into it so that it can be controlled remotely similar to how I'm doing it for VLC.
 
-Also, the login system is not complete.  The searcher is slow, simply because I'm doing a naive linear search which is obviously not ideal.  I'll work on that eventually.
+Also, the login system is not complete.  The searcher is slow, simply because I'm doing a naive linear O(n) search which is obviously not ideal.  I'll work on that eventually.
 
-There is currently no persistence either.  If the system crashes, the state of app is lost.
+There is currently no persistence either.  If the system crashes, the state of app is lost.  Obviously not ideal.
 
 ## How it works
 
@@ -33,25 +33,29 @@ That's fine by me.  =)
 
 ## Software used
 
-- Python
-- Flask
-- Gevent
-- VLC Media Player
-- JQuery Mobile 1.3
-- Swipe.js
+- Python (for the sweet, sweet language)
+- Flask (for light-weight web application that hosts the Karaoke logic)
+- Gevent (for coroutine, green threaded badass-ness)
+- PyKaraoke (for playing Karaoke CDG/MP3 files on the Raspberry Pi)
+- VLC Media Player (for playing Karaoke CDG/MP3 files on the VLC, only tested on Mac OSX 10.7)
+- JQuery Mobile 1.3 (for mobile-web interfaces)
+- Swipe.js (for mobile-web banners)
 
  
 ## Initial Setup
 
+Everything below here needs to get formatted better)
+
 From fresh install of Raspbian
 
     sudo apt-get update (installs latest OS)
-    sudo apt-get install python-dev
-    sudo apt-get install libevent-dev
-    sudo apt-get install pip
-    sudo apt-get install git-core
-    sudo apt-get install pykaraoke (installs in main site-packages)
-
+    sudo apt-get install python-dev #required for gevent I believe
+    sudo apt-get install libevent-dev #required for gevent for sure
+    sudo apt-get install pip #required to install Python packages
+    sudo apt-get install git-core #required to get the latest source via github.com
+    sudo apt-get install pykaraoke (installs in main site-packages) #required to get the raspbian pykaraoke library
+    
+    source bin/activate (to activate your virtual-env)
     pip install flask
     pip install gevent
 
@@ -61,7 +65,7 @@ create a virtualenv (make sure that you are using site-packages otherwise can't 
 9. cd KaraokePi
 10. source bin/activate
 11. pip install flask
-12. python karaokepi_server.py (starts the Flask server)
+12. python KaraokeBerry.py (starts the Flask server)
 13. consider using redis as a backing store, i see the light about redis being a kind of extension of Python with it's awesome datastructures
 
 TODO:
@@ -75,4 +79,32 @@ TODO:
 
 GETTING STARTED:
 1. navigate to localhost:5000/mobile  (to see the jquery mobile interface in action)
-2. read karaokepi.py to see all the rest calls supported.
+2. read KaraokeBerry.py to see all the rest calls supported.
+
+## About KaraokeBerry
+
+KaraokeBerry actually exists in a previous incarnation as a simple C# .net Windows Forms app that I built for my wife years ago.  It basically
+provided a simple GUI to search her karaoke library of music and with a double-click would launch WinAmp which had a CDG plugin that could
+play the mp3 music and show the lyrics on the screen.  
+
+We actually used it at a few Karaoke partys and I realized how much people love being able to digitally search a large library instead of
+tediously combing over an out-dated printed book.
+
+All of this was executed on a tiny netbook that was connected to my PA system (from my band days) and the netbook had a VGA out, that I connected
+to a larger screen so people could sing along.
+
+As time went by and mobile devices became more prevelant I realized that I needed to overhaul this thing and build it in a remote-controlled wireless
+fashion with minimal hardware.  Since this is a one-man show KaraokeBerry is what I came up with.  This is my weekend warrior project and I 
+finally found a good excuse to buy a Raspberry Pi and put the pieces together.
+
+I could never take credit for this entire app because it obviously builds on some truly amazing open source software technologies.  I want to give 
+a special shout-out to the Python Flask framework and to Gevent which is a mind-blowing tool for building highly responsive and scalable apps.
+
+If you like Karaoke Berry please consider contributing and helping me make this software awesome.  I'm open to suggestions and I'm always looking
+to improve my code and implementation details.
+
+Feel free to fork this bad boy!
+
+-Ralph [deckarep [at] gmail [dot] com]
+
+
