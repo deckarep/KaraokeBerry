@@ -19,7 +19,7 @@ import time
 #flask specific imports
 from flask import Flask, session, redirect, url_for, escape, request, jsonify, Response, stream_with_context
 from werkzeug.debug import DebuggedApplication
-import vlc_controller
+import pykaraoke_controller
 import karaokestore
 
 
@@ -29,7 +29,7 @@ SONG_PATH = '/Users/ralphcaraveo/Karaoke'
 ADMIN_ACCOUNT = 'admin'
 ADMIN_PASSWORD = 'password123'
 
-karaoke_controller = vlc_controller.Controller()
+karaoke_controller = pykaraoke_controller.Controller()
 store = karaokestore.KaraokeStore()
 song_db = []
 

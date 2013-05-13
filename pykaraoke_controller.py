@@ -57,7 +57,7 @@ class Controller(object):
 		pass
 
 	def play_file(self, path_to_file):
-		pass
+		self.start(path_to_file)
 
 	def enqueue_file(self, path_to_file):
 		pass
