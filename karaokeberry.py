@@ -22,8 +22,7 @@ from werkzeug.debug import DebuggedApplication
 import pykaraoke_controller
 import karaokestore
 
-
-SONG_PATH = '/Users/ralphcaraveo/Karaoke'
+SONG_PATH = '~/'
 
 #used for karaoke pi admin console, simply just to manage the admin console for KaraokePi
 ADMIN_ACCOUNT = 'admin'
@@ -46,7 +45,7 @@ def initialize():
 @app.route("/build")
 def build_song_db():
     global song_db
-    files = glob.glob(os.path.join(SONG_PATH, '*.mp3'))
+    files = glob.glob(os.path.join(os.path.expanduser(SONG_PATH), '*.mp3'))
 
     for file_path in files:
         name = os.path.basename(file_path)
@@ -56,7 +55,7 @@ def build_song_db():
             song = tokens[-1]
             song = song.strip().replace('.mp3', '')
             artist = artist.strip()
-            song_db.append({'name':name.replace('.mp3', ''), 'artist':artist, 'track':{'t':song,'fp':name.replace("'", "\\'"), 'tid':000}})
+            song_db.append({'name':name.replace('.mp3', ''), 'artist':artist, 'track':{'t':song,'fp':name.replace("'", "\\'").replace('.mp3', '.cdg'), 'tid':000}})
     return jsonify(dict(result="OK"))
 
 #static files test
@@ -210,6 +209,7 @@ def list_main_queue():
 
 @app.route("/play/<artist>")
 def play_artist(artist):
+    print artist
     karaoke_controller.play_file(artist)
     return jsonify(dict(result="OK"))
 
@@ -243,10 +243,9 @@ if __name__ == "__main__":
     #line enables the werkzeug debugger with other middleware like gevent wsgiserver
     print 'Running KaraokeBerry on port 5555.'
     app = DebuggedApplication(app, evalex=True)
-
-    http_server = WSGIServer(('', 5555), app)  #can i run gevent on raspberry pi? Yes! Already done.
+    
+    PORT = 5555
+    http_server = WSGIServer(('', PORT), app)  #can i run gevent on raspberry pi? Yes! Already done.
+    print "Serving at: %s:%d" % (piaddress(), PORT)
     http_server.serve_forever()
-    #flask style
-    #app.run('0.0.0.0', port=5555)
-
 
